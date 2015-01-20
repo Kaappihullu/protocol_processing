@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>d008e5de-77f4-4993-9806-5d14bbc28aee</ProjectGuid>
+    <ProjectGuid>{43D11629-44B3-42D7-B3E1-2058BC34EC7E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ProtocolProcessingGUI</RootNamespace>
