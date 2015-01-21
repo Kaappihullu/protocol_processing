@@ -22,6 +22,9 @@
     <Filter Include="Header Files\Simulation">
       <UniqueIdentifier>{15b3f948-6d7d-45ef-8be2-2c98554ac87e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\router">
+      <UniqueIdentifier>{c1f86840-be81-4f92-b98d-861cf44f4a7f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -29,6 +32,9 @@
     </ClCompile>
     <ClCompile Include="list.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="simulation.c">
+      <Filter>Source Files\Simulation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -40,6 +46,9 @@
     </ClInclude>
     <ClInclude Include="list.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="router.h">
+      <Filter>Header Files\router</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

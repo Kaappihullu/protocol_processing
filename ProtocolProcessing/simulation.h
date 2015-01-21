@@ -7,14 +7,39 @@
 	#include "types.h"
 #endif
 
+typedef enum{
+	raw = 0,
+	tcp = 1,
+} simulation_socket_type;
+
+typedef UInt8 simulation_addr[4];
+
+//only necessary for tcp connections. raw sockets dont have ports.
 Int simulation_bind(Pointer socket,Int port);
 Int simulation_listen(Pointer socket);
-Pointer simulation_connect(UInt8 addr[4]);
+Pointer simulation_connect(simulation_addr addr);
+//after socket has been bound and is set to listen state, use this to accept incoming connections.
 Pointer simulation_accept(Pointer socket);
+//use this to create the socket.
+Pointer simulation_socket(simulation_socket_type type);
 
+Int simulation_read_socket(Pointer socket,Int8* data, Int size);
+Int simulation_write_socket(Pointer socket, Int8* data, Int size);
 
-Int8* simulation_read_packet(Pointer socket,Int32* size);
+/*
+ *
+ * PUBLIC PARTION, MAYBE WRITE ANOTHER HEADER FILE FOR IT.
+ *
+ */
 
-Int simulation_broadcast_write(Int8* data, Int size);
-Int8* simulation_broadcast_read(Int size);
-Int simulation_broadcast_poll(void);
+typedef struct{
+	simulation_addr gateway;
+	simulation_addr local_subnet;
+} network_area;
+
+void simulation_create_network(network_area network);
+void simulation_add_peer_to_network(network_area network, Pointer peer);
+Pointer simulation_get_peer_list(network_area network);
+
+void simulation_start(void);
+void simulation_stop(void);
