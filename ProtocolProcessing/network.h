@@ -7,6 +7,8 @@
 	#include "types.h"
 #endif
 
+typedef UInt8 simulation_addr[4];
+
 typedef struct{
 	simulation_addr gateway;
 	simulation_addr local_subnet;
@@ -22,10 +24,13 @@ typedef struct _network_node{
 
 	network_prefix m_prefix;
 	
-	Pointer m_child_list;
+	Pointer m_child_peer_list;
+	Pointer m_child_node_list;
 	struct _network_node* m_next;
 
 } network_node;
 
 
 network_node* create_network_node(void);
+
+Int is_in_network_prefix(network_prefix prefix, simulation_addr addr);

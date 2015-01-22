@@ -1,11 +1,14 @@
 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#include <memory.h>
+
 #include "simulation.h"
 
 #ifndef _LIST_H_
 	#include "list.h"
 #endif
-
-#include <Windows.h>
 
 
 
@@ -36,6 +39,8 @@ typedef struct{
 
 } BOUND_SOCKET;
 
+static network_node *parent_node = 0;
+
 #define PSOCKET(socket) ((SOCKET*)socket)
 
 Int simulation_write_raw_socket(Pointer socket, Int8* data, Int size){
@@ -52,6 +57,10 @@ Int simulation_read_raw_socket(Pointer socket,Int8* data , Int size){
 	ReadFile(PSOCKET(socket)->m_out,data,size,&bytesRead,0);
 
 	return bytesRead;
+}
+
+Pointer simulation_find_peer(network_node* node , simulation_addr addr){
+	
 }
 
 Int simulation_connect_raw_socket(Pointer socket, simulation_addr addr){

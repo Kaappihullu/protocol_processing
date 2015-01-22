@@ -16,7 +16,6 @@ typedef enum{
 	tcp = 1,
 } simulation_socket_type;
 
-typedef UInt8 simulation_addr[4];
 
 //only necessary for tcp connections. raw sockets dont have ports.
 Int simulation_bind(Pointer socket,Int port);
