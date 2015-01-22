@@ -36,6 +36,9 @@
     <ClCompile Include="simulation.c">
       <Filter>Source Files\Simulation</Filter>
     </ClCompile>
+    <ClCompile Include="router.c">
+      <Filter>Source Files\Router</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="simulation.h">
