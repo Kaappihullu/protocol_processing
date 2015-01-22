@@ -8,18 +8,11 @@
 #include <Windows.h>
 
 
-typedef struct _NetworkNode{
-
-	Pointer m_nodes;
-	network_prefix m_prefix;
-
-	struct _NetworkNode* m_next;
-
-} NetworkNode;
-
 
 typedef Int (*socket_read_func)(Pointer,Int8*,Int);
 typedef Int (*socket_write_func)(Pointer,Int8*,Int);
+
+typedef Int (*socket_connect_func)(Pointer,simulation_addr);
 
 typedef struct{
 	
@@ -30,6 +23,8 @@ typedef struct{
 
 	socket_read_func m_read;
 	socket_write_func m_write;
+
+	socket_connect_func m_connect;
 
 } SOCKET;
 
@@ -59,6 +54,11 @@ Int simulation_read_raw_socket(Pointer socket,Int8* data , Int size){
 	return bytesRead;
 }
 
+Int simulation_connect_raw_socket(Pointer socket, simulation_addr addr){
+	
+	return 0;
+}
+
 Int simulation_read_socket(Pointer socket,Int8* data , Int size){
 	
 	return PSOCKET(socket)->m_read(socket,data,size);
@@ -80,7 +80,13 @@ Pointer simulation_socket(simulation_socket_type type){
 	socket->m_read = simulation_read_raw_socket;
 	socket->m_write = simulation_write_raw_socket;
 
+	socket->m_connect = simulation_connect_raw_socket;
+
 	socket->m_type = type;
 
 	return socket;
+}
+
+Int simulation_connect(Pointer socket, simulation_addr addr){
+	PSOCKET(socket)->m_connect(socket,addr);
 }
