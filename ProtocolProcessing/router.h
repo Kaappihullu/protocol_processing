@@ -14,3 +14,5 @@
 Pointer router_create(void);
 
 simulation_addr* router_get_address(Pointer peer);
+
+void router_set_address(Pointer peer, simulation_addr addr);

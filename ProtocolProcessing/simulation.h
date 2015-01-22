@@ -37,8 +37,14 @@ typedef struct{
 	simulation_addr local_subnet;
 } network_area;
 
+typedef struct{
+	simulation_addr prefix;
+	Int prefix_len;
+}network_prefix;
+
 void simulation_create_network(network_area network);
 void simulation_add_peer_to_network(network_area network, Pointer peer);
+
 Pointer simulation_get_peer_list(network_area network);
 
 void simulation_start(void);
