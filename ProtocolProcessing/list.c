@@ -1,6 +1,7 @@
 
 #include "list.h"
 
+#include <malloc.h>
 #include <memory.h>
 
 typedef struct{

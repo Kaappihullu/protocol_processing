@@ -7,12 +7,12 @@
 	#include "types.h"
 #endif
 
-#ifndef _SIMULATION_H_
-	#include "simulation.h"
+#ifndef _NETWORK_H_
+	#include "network.h"
 #endif
 
 Pointer router_create(void);
 
-simulation_addr* router_get_address(Pointer peer);
+network_addr* router_get_address(Pointer peer);
 
-void router_set_address(Pointer peer, simulation_addr addr);
+void router_set_address(Pointer peer, network_addr addr);

@@ -7,18 +7,19 @@
 	#include "types.h"
 #endif
 
-typedef UInt8 simulation_addr[4];
+typedef UInt8 network_addr[4];
 
 typedef struct{
-	simulation_addr gateway;
-	simulation_addr local_subnet;
+	network_addr gateway;
+	network_addr local_subnet;
 } network_area;
 
 typedef struct{
-	simulation_addr prefix;
+	network_addr prefix;
 	Int prefix_len;
 }network_prefix;
 
+#define IS_SAME_ADDRESS(x,y) ((x[0] == y[0]) && (x[1] == y[1]) && (x[2] == y[2]) && (x[3] == y[3]))
 
 typedef struct _network_node{
 
@@ -33,4 +34,4 @@ typedef struct _network_node{
 
 network_node* create_network_node(void);
 
-Int is_in_network_prefix(network_prefix prefix, simulation_addr addr);
+Int is_in_network_prefix(network_prefix prefix, network_addr addr);

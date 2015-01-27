@@ -1,4 +1,4 @@
-
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
 #include "network.h"
@@ -15,7 +15,15 @@ network_node* create_network_node(void){
 	return node;
 }
 //needs a proper bitwise operations.
-Int is_in_network_prefix(network_prefix prefix, network_node node){
+Int is_in_network_prefix(network_prefix prefix, network_addr addr){
 	
+	int i;
+
+	for(i=0;8*(i+1)<prefix.prefix_len;i++){
+		if(prefix.prefix[i] != addr[i]){
+			return 1;
+		}
+	}
+	return 0;
 }
 

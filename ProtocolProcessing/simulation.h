@@ -20,7 +20,7 @@ typedef enum{
 //only necessary for tcp connections. raw sockets dont have ports.
 Int simulation_bind(Pointer socket,Int port);
 Int simulation_listen(Pointer socket);
-Int simulation_connect(Pointer socket ,simulation_addr addr);
+Int simulation_connect(Pointer socket ,network_addr addr);
 //after socket has been bound and is set to listen state, use this to accept incoming connections.
 Pointer simulation_accept(Pointer socket);
 //use this to create the socket.

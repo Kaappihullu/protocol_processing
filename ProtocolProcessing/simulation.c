@@ -6,16 +6,21 @@
 
 #include "simulation.h"
 
+#ifndef _ROUTER_H_
+	#include "router.h"
+#endif
+
 #ifndef _LIST_H_
 	#include "list.h"
 #endif
 
 
 
+
 typedef Int (*socket_read_func)(Pointer,Int8*,Int);
 typedef Int (*socket_write_func)(Pointer,Int8*,Int);
 
-typedef Int (*socket_connect_func)(Pointer,simulation_addr);
+typedef Int (*socket_connect_func)(Pointer,network_addr);
 
 typedef struct{
 	
@@ -59,11 +64,45 @@ Int simulation_read_raw_socket(Pointer socket,Int8* data , Int size){
 	return bytesRead;
 }
 
-Pointer simulation_find_peer(network_node* node , simulation_addr addr){
+//searches peer from node's "sibling" and "child" nodes.
+//TODO: test and debug, also "normalize" and or divide it to seperate calls.
+Pointer simulation_find_peer(network_node* node , network_addr addr){
 	
+	int i,c;
+
+	if(is_in_network_prefix(node->m_prefix,addr)){
+		return 0;
+	}
+
+	if(node->m_child_peer_list != 0){
+		c = list_get_count(node->m_child_peer_list);
+
+		for(i=0;i<c;i++){
+			if(IS_SAME_ADDRESS(*router_get_address(list_get_item(node->m_child_peer_list,i)),addr)){
+				return list_get_item(node->m_child_peer_list,i);
+			}
+		}
+	}
+
+	if(node->m_child_node_list != 0){
+		c = list_get_count(node->m_child_node_list);
+
+		for(i=0;i<c;i++){
+			Pointer peer = simulation_find_peer(list_get_item(node->m_child_node_list,i),addr);
+			if(peer){
+				return peer;
+			}
+		}
+
+	}
+
+	if(node->m_next){
+		return simulation_find_peer(node->m_next,addr);
+	}
+	return 0;
 }
 
-Int simulation_connect_raw_socket(Pointer socket, simulation_addr addr){
+Int simulation_connect_raw_socket(Pointer socket, network_addr addr){
 	
 	return 0;
 }
@@ -96,6 +135,6 @@ Pointer simulation_socket(simulation_socket_type type){
 	return socket;
 }
 
-Int simulation_connect(Pointer socket, simulation_addr addr){
+Int simulation_connect(Pointer socket, network_addr addr){
 	PSOCKET(socket)->m_connect(socket,addr);
 }
