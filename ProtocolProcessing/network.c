@@ -7,13 +7,41 @@
 	#include "list.h"
 #endif
 
-network_node* create_network_node(void){
+#include <malloc.h>
+#include <memmory.h>
+
+network_node* network_create_node(void){
 	
 	network_node* node = malloc(sizeof(network_node));
 	memset(node,0,sizeof(network_node));
 
 	return node;
 }
+
+network_node_chain* network_create_node_chain(void){
+	
+	network_node_chain* chain = malloc(sizeof(network_node_chain));
+	memset(chain,0,sizeof(network_node_chain));
+
+	return chain;
+}
+
+void network_free_node(network_node* node){
+	free(node);
+}
+
+void network_free_node_chain(network_node_chain* chain){
+	
+	if(chain){
+		network_free_node_chain(chain->next);
+	}
+
+	network_free_node(chain->current);
+
+	free(chain);
+
+}
+
 //needs a proper bitwise operations.
 Int is_in_network_prefix(network_prefix prefix, network_addr addr){
 	

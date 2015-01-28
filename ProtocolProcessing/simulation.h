@@ -35,10 +35,10 @@ Int simulation_write_socket(Pointer socket, Int8* data, Int size);
  *
  */
 
-void simulation_create_network(network_area network);
-void simulation_add_peer_to_network(network_area network, Pointer peer);
+Pointer simulation_create_network(network_area network);
+Pointer simulation_add_node_to_network(network_area network, Pointer peer);
 
-Pointer simulation_get_peer_list(network_area network);
+Pointer simulation_get_node_list(network_area network);
 
 void simulation_start(void);
 void simulation_stop(void);

@@ -63,47 +63,33 @@ Int simulation_read_raw_socket(Pointer socket,Int8* data , Int size){
 
 	return bytesRead;
 }
-
-//searches peer from node's "sibling" and "child" nodes.
-//TODO: test and debug, also "normalize" and or divide it to seperate calls.
-Pointer simulation_find_peer(network_node* node , network_addr addr){
+// TODO: Add BGP support.
+network_node* simulation_find_peer(network_node* node , network_addr addr){
 	
 	int i,c;
-
-	if(is_in_network_prefix(node->m_prefix,addr)){
-		return 0;
-	}
-
-	if(node->m_child_peer_list != 0){
-		c = list_get_count(node->m_child_peer_list);
+	
+	if(node->local_area_list){
+		c = list_get_count(node->local_area_list);
 
 		for(i=0;i<c;i++){
-			if(IS_SAME_ADDRESS(*router_get_address(list_get_item(node->m_child_peer_list,i)),addr)){
-				return list_get_item(node->m_child_peer_list,i);
+			network_node* n_node = list_get_item(node->local_area_list,i);
+
+			if(!IS_SAME_ADDRESS(n_node->address,addr)){
+				return n_node;
 			}
 		}
-	}
-
-	if(node->m_child_node_list != 0){
-		c = list_get_count(node->m_child_node_list);
-
-		for(i=0;i<c;i++){
-			Pointer peer = simulation_find_peer(list_get_item(node->m_child_node_list,i),addr);
-			if(peer){
-				return peer;
-			}
-		}
-
-	}
-
-	if(node->m_next){
-		return simulation_find_peer(node->m_next,addr);
 	}
 	return 0;
 }
 
 Int simulation_connect_raw_socket(Pointer socket, network_addr addr){
 	
+	Pointer peer = simulation_find_peer(parent_node,addr);
+
+	if(!peer){
+
+	}
+
 	return 0;
 }
 

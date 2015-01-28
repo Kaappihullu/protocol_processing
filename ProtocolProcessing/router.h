@@ -11,6 +11,10 @@
 	#include "network.h"
 #endif
 
+/*
+ * TODO: Rename? or delete
+ */
+
 Pointer router_create(void);
 
 network_addr* router_get_address(Pointer peer);

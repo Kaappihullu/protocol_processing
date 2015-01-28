@@ -23,15 +23,23 @@ typedef struct{
 
 typedef struct _network_node{
 
-	network_prefix m_prefix;
+	network_prefix prefix;
 	
-	Pointer m_child_peer_list;
-	Pointer m_child_node_list;
-	struct _network_node* m_next;
+	network_addr address;
+
+	//List of nodes directly connected to this node.
+	Pointer local_area_list;
 
 } network_node;
 
+typedef struct _network_node_chain{
+	 network_node* current;
+	 struct _network_node_chain* next;
+} network_node_chain;
 
-network_node* create_network_node(void);
+network_node* network_create_node(void);
+network_node_chain* network_create_node_chain(void);
+
+void network_free_node_chain(network_node_chain* chain);
 
 Int is_in_network_prefix(network_prefix prefix, network_addr addr);
