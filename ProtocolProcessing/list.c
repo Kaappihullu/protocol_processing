@@ -33,6 +33,7 @@ void list_resize(Pointer list, Int nCapacity){
 	}
 
 	PLIST(list)->m_capacity = nCapacity;
+	free(PLIST(list)->m_head);
 	PLIST(list)->m_head = nHead;
 
 }
@@ -42,5 +43,10 @@ Pointer list_get_item(Pointer list, Int index){
 }
 
 void list_add_item(Pointer list, Pointer item){
+
+	if(PLIST(list)->m_capacity == PLIST(list)->m_count){
+		list_resize(list,PLIST(list)->m_capacity*2);
+	}
+
 	MEMPOS(PLIST(list),PLIST(list)->m_count++);
 }
