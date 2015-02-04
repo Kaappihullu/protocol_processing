@@ -16,12 +16,7 @@
 #endif
 
 
-typedef struct{
 
-	network_area m_area;
-	network_node* m_gateway;
-	Pointer m_node_list;
-} SIMULATION_NETWORK;
 
 static Pointer m_network_list = 0;
 
@@ -44,21 +39,6 @@ network_node* simulation_find_peer(network_node* node , network_addr addr){
 		}
 	}
 	return 0;
-}
-
-
-Pointer simulation_create_network(network_area area){
-
-	SIMULATION_NETWORK* simulation_network = malloc(sizeof(SIMULATION_NETWORK));
-
-	simulation_network->m_area = area;
-	simulation_network->m_gateway = network_create_node();
-	memcpy(simulation_network->m_gateway->address,area.gateway,4);
-
-	simulation_network->m_node_list = list_create();
-
-	//list_add_item(m_network_list,simulation_network);
-	return simulation_network;
 }
 
 

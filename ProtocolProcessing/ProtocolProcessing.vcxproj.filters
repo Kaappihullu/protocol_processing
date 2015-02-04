@@ -42,6 +42,9 @@
     <ClCompile Include="network.c">
       <Filter>Source Files\Simulation</Filter>
     </ClCompile>
+    <ClCompile Include="simulation_socket.c">
+      <Filter>Source Files\Simulation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="simulation.h">
@@ -57,6 +60,9 @@
       <Filter>Header Files\router</Filter>
     </ClInclude>
     <ClInclude Include="network.h">
+      <Filter>Header Files\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="simulation_socket.h">
       <Filter>Header Files\Simulation</Filter>
     </ClInclude>
   </ItemGroup>

@@ -16,16 +16,21 @@ typedef Int (*socket_write_func)(Pointer,Int8*,Int);
 typedef Int (*socket_connect_func)(Pointer,network_addr);
 
 typedef struct{
+	Pointer m_read;
+	Pointer m_write;
+} SOCKET_PIPE;
+
+typedef struct{
 	
 	simulation_socket_type m_type;
 
-	network_node* m_host;
-	Pointer m_in;
-	Pointer m_out;
+	SOCKET_PIPE m_host_pipe;
+	SOCKET_PIPE m_connected_pipe;
+	//in a sense this does not belong here, but the implementation demands it.
+	network_node* m_host_node;
 
 	socket_read_func m_read;
 	socket_write_func m_write;
-
 	socket_connect_func m_connect;
 
 } SOCKET;
@@ -45,15 +50,15 @@ typedef struct{
 Int simulation_write_raw_socket(Pointer socket, Int8* data, Int size){
 	
 	UInt32 bytesWritten = 0;
-	WriteFile(PSOCKET(socket)->m_in,data,size,&bytesWritten,0);
-	
+	WriteFile(PSOCKET(socket)->m_connected_pipe.m_write,data,size,&bytesWritten,0);
+
 	return bytesWritten;
 }
 
 Int simulation_read_raw_socket(Pointer socket,Int8* data , Int size){
 
 	UInt32 bytesRead = 0;
-	ReadFile(PSOCKET(socket)->m_out,data,size,&bytesRead,0);
+	ReadFile(PSOCKET(socket)->m_host_pipe.m_read,data,size,&bytesRead,0);
 
 	return bytesRead;
 }
@@ -82,9 +87,9 @@ Pointer simulation_socket(network_node* host ,simulation_socket_type type){
 	SOCKET* socket = malloc(sizeof(SOCKET));
 	memset(socket,0,sizeof(SOCKET));
 	
-	socket->m_host = host;
+	socket->m_host_node = host;
 
-	CreatePipe(&socket->m_out,&socket->m_in,0,0);
+	CreatePipe(&socket->m_host_pipe.m_read,&socket->m_host_pipe.m_write,0,0);
 
 	socket->m_read = simulation_read_raw_socket;
 	socket->m_write = simulation_write_raw_socket;

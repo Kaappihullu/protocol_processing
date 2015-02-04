@@ -80,12 +80,14 @@
     <ClCompile Include="network.c" />
     <ClCompile Include="router.c" />
     <ClCompile Include="simulation.c" />
+    <ClCompile Include="simulation_socket.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="list.h" />
     <ClInclude Include="network.h" />
     <ClInclude Include="router.h" />
     <ClInclude Include="simulation.h" />
+    <ClInclude Include="simulation_socket.h" />
     <ClInclude Include="types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

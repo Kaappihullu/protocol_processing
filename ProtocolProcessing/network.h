@@ -29,6 +29,13 @@ typedef struct _network_node{
 
 	//List of nodes directly connected to this node.
 	Pointer local_area_list;
+	
+	struct{
+		//the main socket.
+		Pointer socket;
+		//really!?
+		Pointer bound_socket_list;
+	} peer;
 
 } network_node;
 
