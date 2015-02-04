@@ -38,6 +38,10 @@ void list_resize(Pointer list, Int nCapacity){
 
 }
 
+int list_get_count(Pointer list){
+	return PLIST(list)->m_count;
+}
+
 Pointer list_get_item(Pointer list, Int index){
 	return MEMPOS(PLIST(list)->m_head,index);
 }

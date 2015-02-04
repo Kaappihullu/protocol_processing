@@ -8,7 +8,7 @@
 #endif
 
 #include <malloc.h>
-#include <memmory.h>
+#include <memory.h>
 
 network_node* network_create_node(void){
 	
