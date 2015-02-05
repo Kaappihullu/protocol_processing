@@ -12,8 +12,8 @@
 #endif
 
 typedef enum{
-	raw = 0,
-	tcp = 1,
+	socket_type_raw = 0,
+	socket_type_tcp = 1,
 } simulation_socket_type;
 
 

@@ -3,6 +3,10 @@
 
 #include "network.h"
 
+#ifndef _SIMULATION_SOCKET_H_
+	#include "simulation_socket.h"
+#endif
+
 #ifndef _LIST_H_
 	#include "list.h"
 #endif
@@ -70,12 +74,32 @@ network_node* network_get_node(Pointer simulation_network, network_addr addr){
 	return 0;
 }
 
+
+/*unsigned long __stdcall network_node_main(void* param){
+
+	return 0;
+}*/
+
 network_node* network_create_node(void){
 	
 	network_node* node = malloc(sizeof(network_node));
 	memset(node,0,sizeof(network_node));
 
+	node->peer.socket = simulation_socket(node,socket_type_raw);
+	node->peer.bound_socket_list = list_create();
+	//node->thread_handle = CreateThread(0,0,network_node_main,node,0,0);
+
 	return node;
+}
+
+void network_add_to_network(Pointer simulation_network, network_addr addr){
+
+	network_node* node = network_create_node();
+	memcpy(node->address,addr,4);
+	memcpy(&node->prefix.prefix,&PSIMULATION_NETWORK(simulation_network)->m_gateway->prefix,sizeof(network_prefix));
+
+	list_add_item(PSIMULATION_NETWORK(simulation_network)->m_node_list,node);
+
 }
 
 network_node_chain* network_create_node_chain(void){
@@ -101,5 +125,3 @@ void network_free_node_chain(network_node_chain* chain){
 	free(chain);
 
 }
-
-
