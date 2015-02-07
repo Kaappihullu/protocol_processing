@@ -16,6 +16,17 @@ typedef enum{
 	socket_type_tcp = 1,
 } simulation_socket_type;
 
+typedef struct{
+	Int32 marker;
+
+	network_addr addr;
+	Int16 packet_len;
+
+	Int8* paket_payload;
+
+} SOCKET_PACKET;
+
+void socket_packet_set_payload(Int8* payload, Int16 payload_len);
 
 //only necessary for tcp connections. raw sockets dont have ports.
 Int simulation_bind(Pointer socket,Int port);

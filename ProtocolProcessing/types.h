@@ -5,6 +5,9 @@
 #define UInt8 unsigned char
 #define Int8 char
 
+#define Int16 short
+#define UInt16 unsigned short
+
 #define UInt32 unsigned long
 #define Int32 long
 

@@ -28,7 +28,7 @@ typedef struct _network_node{
 	
 	network_addr address;
 	
-	Pointer thread_handle;
+	//Pointer thread_handle;
 
 	struct{
 		//the main socket.
@@ -44,7 +44,7 @@ typedef struct _network_node_chain{
 	 struct _network_node_chain* next;
 } network_node_chain;
 
-void network_add_to_network(network_node* node)
+void network_add_to_network(network_node* node);
 
 network_node* network_create_node(void);
 network_node_chain* network_create_node_chain(void);
@@ -55,5 +55,5 @@ Int is_in_network_prefix(network_prefix prefix, network_addr addr);
 
 Pointer network_create_simulation_network(network_area area);
 void network_add_simulation_network(Pointer simulation_network, network_addr addr);
-void network_link_simulation_network(Pointer simulation_network1, Pointer simulation_network2);
+//void network_link_simulation_network(Pointer simulation_network1, Pointer simulation_network2);
 

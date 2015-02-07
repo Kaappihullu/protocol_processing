@@ -22,24 +22,6 @@ static Pointer m_network_list = 0;
 
 #define PSIMULATION_NETWORK(network) ((SIMULATION_NETWORK*)network)
 
-// TODO: Add BGP support.
-network_node* simulation_find_peer(network_node* node , network_addr addr){
-	
-	int i,c;
-	
-	if(node->local_area_list){
-		c = list_get_count(node->local_area_list);
-
-		for(i=0;i<c;i++){
-			network_node* n_node = list_get_item(node->local_area_list,i);
-
-			if(!IS_SAME_ADDRESS(n_node->address,addr)){
-				return n_node;
-			}
-		}
-	}
-	return 0;
-}
 
 
 void simulation_start(void){

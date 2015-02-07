@@ -18,7 +18,7 @@
 typedef struct{
 
 	network_area m_area;
-	network_node* m_gateway;
+	//network_node* m_gateway;
 	Pointer m_node_list;
 } SIMULATION_NETWORK;
 
@@ -42,8 +42,8 @@ Pointer network_create_simulation_network(network_area area){
 	SIMULATION_NETWORK* simulation_network = malloc(sizeof(SIMULATION_NETWORK));
 
 	simulation_network->m_area = area;
-	simulation_network->m_gateway = network_create_node();
-	memcpy(simulation_network->m_gateway->address,area.gateway,4);
+	//simulation_network->m_gateway = network_create_node();
+	//memcpy(simulation_network->m_gateway->address,area.gateway,4);
 
 	simulation_network->m_node_list = list_create();
 
@@ -55,13 +55,9 @@ network_node* network_get_node(Pointer simulation_network, network_addr addr){
 	
 	int i,c;
 
-	if(is_in_network_prefix(PSIMULATION_NETWORK(simulation_network)->m_gateway->prefix,addr)){
+	/*if(is_in_network_prefix(PSIMULATION_NETWORK(simulation_network)->m_area.local_subnet,addr)){
 		return 0;
-	}
-
-	if(!IS_SAME_ADDRESS(PSIMULATION_NETWORK(simulation_network)->m_gateway->address,addr)){
-		return PSIMULATION_NETWORK(simulation_network)->m_gateway;
-	}
+	}*/
 
 	c = list_get_count(PSIMULATION_NETWORK(simulation_network)->m_node_list);
 
@@ -96,7 +92,7 @@ void network_add_to_network(Pointer simulation_network, network_addr addr){
 
 	network_node* node = network_create_node();
 	memcpy(node->address,addr,4);
-	memcpy(&node->prefix.prefix,&PSIMULATION_NETWORK(simulation_network)->m_gateway->prefix,sizeof(network_prefix));
+	//memcpy(&node->prefix.prefix,&PSIMULATION_NETWORK(simulation_network)->m_gateway->prefix,sizeof(network_prefix));
 
 	list_add_item(PSIMULATION_NETWORK(simulation_network)->m_node_list,node);
 
