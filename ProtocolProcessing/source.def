@@ -1,0 +1,8 @@
+LIBRARY ProtocolProcessing
+
+EXPORTS
+network_create_simulation_network
+network_add_simulation_network
+network_get_node
+
+network_create_node

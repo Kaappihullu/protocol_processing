@@ -16,8 +16,6 @@
 
 
 typedef struct{
-
-	network_area m_area;
 	//network_node* m_gateway;
 	Pointer m_node_list;
 } SIMULATION_NETWORK;
@@ -37,17 +35,13 @@ Int is_in_network_prefix(network_prefix prefix, network_addr addr){
 	return 0;
 }
 
-Pointer network_create_simulation_network(network_area area){
+Pointer network_create_simulation_network(void){
 
 	SIMULATION_NETWORK* simulation_network = malloc(sizeof(SIMULATION_NETWORK));
-
-	simulation_network->m_area = area;
-	//simulation_network->m_gateway = network_create_node();
-	//memcpy(simulation_network->m_gateway->address,area.gateway,4);
+	
 
 	simulation_network->m_node_list = list_create();
 
-	//list_add_item(m_network_list,simulation_network);
 	return simulation_network;
 }
 //returns network_node with the address given by addr parameter, if it exists in the network, returns null if it doesnt.
@@ -71,29 +65,23 @@ network_node* network_get_node(Pointer simulation_network, network_addr addr){
 }
 
 
-/*unsigned long __stdcall network_node_main(void* param){
-
-	return 0;
-}*/
-
-network_node* network_create_node(void){
+network_node* network_create_node(network_addr addr){
 	
 	network_node* node = malloc(sizeof(network_node));
+	
 	memset(node,0,sizeof(network_node));
-
+	memcpy(node->address,addr,4);
+	
 	node->peer.socket = simulation_socket(node,socket_type_raw);
 	node->peer.bound_socket_list = list_create();
-	//node->thread_handle = CreateThread(0,0,network_node_main,node,0,0);
 
 	return node;
 }
 
-void network_add_to_network(Pointer simulation_network, network_addr addr){
+void network_add_to_network(Pointer simulation_network, network_node* node){
 
-	network_node* node = network_create_node();
-	memcpy(node->address,addr,4);
 	//memcpy(&node->prefix.prefix,&PSIMULATION_NETWORK(simulation_network)->m_gateway->prefix,sizeof(network_prefix));
-
+	node->simulation_network = simulation_network;
 	list_add_item(PSIMULATION_NETWORK(simulation_network)->m_node_list,node);
 
 }

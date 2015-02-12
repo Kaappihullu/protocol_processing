@@ -10,11 +10,6 @@
 typedef UInt8 network_addr[4];
 
 typedef struct{
-	network_addr gateway;
-	network_addr local_subnet;
-} network_area;
-
-typedef struct{
 	network_addr prefix;
 	Int prefix_len;
 }network_prefix;
@@ -28,6 +23,8 @@ typedef struct _network_node{
 	
 	network_addr address;
 	
+	Pointer simulation_network;
+
 	//Pointer thread_handle;
 
 	struct{
@@ -46,14 +43,15 @@ typedef struct _network_node_chain{
 
 void network_add_to_network(network_node* node);
 
-network_node* network_create_node(void);
+network_node* network_create_node(network_addr addr);
 network_node_chain* network_create_node_chain(void);
 
 void network_free_node_chain(network_node_chain* chain);
 
 Int is_in_network_prefix(network_prefix prefix, network_addr addr);
 
-Pointer network_create_simulation_network(network_area area);
-void network_add_simulation_network(Pointer simulation_network, network_addr addr);
+network_node* network_get_node(Pointer simulation_network, network_addr addr);
+Pointer network_create_simulation_network(void);
+void network_add_simulation_network(Pointer simulation_network, network_node* node);
 //void network_link_simulation_network(Pointer simulation_network1, Pointer simulation_network2);
 

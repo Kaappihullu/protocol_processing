@@ -12,10 +12,10 @@
 #endif
 
 
-Pointer simulation_create_network(network_area network);
-Pointer simulation_add_node_to_network(network_area network, Pointer peer);
+//Pointer simulation_create_network(network_addr addr);
+//Pointer simulation_add_node_to_network(Pointer simulation_network, network_node* node);
 
-Pointer simulation_get_node_list(network_area network);
+//Pointer simulation_get_node_list(Pointer simulation);
 
 void simulation_start(void);
 void simulation_stop(void);

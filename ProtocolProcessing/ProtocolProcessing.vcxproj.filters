@@ -69,4 +69,9 @@
       <Filter>Header Files\Simulation</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="source.def">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

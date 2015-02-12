@@ -20,22 +20,25 @@ typedef struct{
 	Int32 marker;
 
 	network_addr addr;
+	Int16 mtu;
+
 	Int16 packet_len;
 
 	Int8* paket_payload;
 
 } SOCKET_PACKET;
 
-void socket_packet_set_payload(Int8* payload, Int16 payload_len);
+#define IP_PACKET_MARKER 0xF6F6F6F6
 
-//only necessary for tcp connections. raw sockets dont have ports.
-Int simulation_bind(Pointer socket,Int port);
-Int simulation_listen(Pointer socket);
-Int simulation_connect(Pointer socket ,network_addr addr);
-//after socket has been bound and is set to listen state, use this to accept incoming connections.
-Pointer simulation_accept(Pointer socket);
+void socket_packet_set_payload(SOCKET_PACKET* packet ,Int8* payload, Int16 payload_len);
+
+SOCKET_PACKET* create_ip_packet(network_addr addr, Int16 mtu);
+
 //use this to create the socket.
 Pointer simulation_socket(network_node* host,simulation_socket_type type);
+
+Int simulation_send(network_node* src, Int8* data, Int size, network_addr addr);
+Int simulation_send_raw_socket(network_node* src, Int8* data, Int size, network_addr addr);
 
 Int simulation_read_socket(Pointer socket,Int8* data, Int size);
 Int simulation_write_socket(Pointer socket, Int8* data, Int size);
