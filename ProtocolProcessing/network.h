@@ -19,6 +19,8 @@ typedef struct{
 
 typedef struct _network_node{
 
+	Int node_id;
+
 	network_prefix prefix;
 	
 	network_addr address;
@@ -49,6 +51,10 @@ network_node_chain* network_create_node_chain(void);
 void network_free_node_chain(network_node_chain* chain);
 
 Int is_in_network_prefix(network_prefix prefix, network_addr addr);
+Int network_node_get_id(network_node* node);
+
+Int network_get_node_count(Pointer simulation_network);
+network_node* network_get_node_by_index(Pointer simulation_network, Int index);
 
 network_node* network_get_node(Pointer simulation_network, network_addr addr);
 Pointer network_create_simulation_network(void);

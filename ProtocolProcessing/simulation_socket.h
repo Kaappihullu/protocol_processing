@@ -39,6 +39,7 @@ Pointer simulation_socket(network_node* host,simulation_socket_type type);
 
 Int simulation_send(network_node* src, Int8* data, Int size, network_addr addr);
 Int simulation_send_raw_socket(network_node* src, Int8* data, Int size, network_addr addr);
+SOCKET_PACKET* simulation_receive_raw_socket(network_node* dst);
 
 Int simulation_read_socket(Pointer socket,Int8* data, Int size);
 Int simulation_write_socket(Pointer socket, Int8* data, Int size);

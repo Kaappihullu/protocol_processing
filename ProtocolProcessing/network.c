@@ -44,6 +44,15 @@ Pointer network_create_simulation_network(void){
 
 	return simulation_network;
 }
+
+Int network_get_node_count(Pointer simulation_network){
+	return list_get_count(PSIMULATION_NETWORK(simulation_network)->m_node_list);
+}
+
+network_node* network_get_node_by_index(Pointer simulation_network, Int index){
+	return list_get_item(PSIMULATION_NETWORK(simulation_network)->m_node_list,index);
+}
+
 //returns network_node with the address given by addr parameter, if it exists in the network, returns null if it doesnt.
 network_node* network_get_node(Pointer simulation_network, network_addr addr){
 	
@@ -65,11 +74,14 @@ network_node* network_get_node(Pointer simulation_network, network_addr addr){
 }
 
 
+static Int m_network_last_id = 0;
+
 network_node* network_create_node(network_addr addr){
 	
 	network_node* node = malloc(sizeof(network_node));
 	
 	memset(node,0,sizeof(network_node));
+	node->node_id = ++ m_network_last_id;
 	memcpy(node->address,addr,4);
 	
 	node->peer.socket = simulation_socket(node,socket_type_raw);
@@ -78,7 +90,11 @@ network_node* network_create_node(network_addr addr){
 	return node;
 }
 
-void network_add_to_network(Pointer simulation_network, network_node* node){
+Int network_node_get_id(network_node* node){
+	return node->node_id;
+}
+
+void network_add_simulation_network(Pointer simulation_network, network_node* node){
 
 	//memcpy(&node->prefix.prefix,&PSIMULATION_NETWORK(simulation_network)->m_gateway->prefix,sizeof(network_prefix));
 	node->simulation_network = simulation_network;

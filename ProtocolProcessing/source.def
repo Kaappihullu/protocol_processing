@@ -4,5 +4,7 @@ EXPORTS
 network_create_simulation_network
 network_add_simulation_network
 network_get_node
+network_get_node_by_index
 
+network_get_node_count
 network_create_node

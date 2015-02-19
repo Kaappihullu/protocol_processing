@@ -15,5 +15,11 @@ namespace ProtocolProcessingGUI
         {
             InitializeComponent();
         }
+
+        private void m_addNetworkButton_Click(object sender, EventArgs e)
+        {
+            SimulationNetwork network = new SimulationNetwork();
+            network.AddNode(new NetworkNode("172.0.0.1"));
+        }
     }
 }

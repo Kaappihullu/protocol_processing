@@ -50,6 +50,7 @@
             this.m_addNetworkButton.TabIndex = 1;
             this.m_addNetworkButton.Text = "Add Network";
             this.m_addNetworkButton.UseVisualStyleBackColor = true;
+            this.m_addNetworkButton.Click += new System.EventHandler(this.m_addNetworkButton_Click);
             // 
             // MainForm
             // 
