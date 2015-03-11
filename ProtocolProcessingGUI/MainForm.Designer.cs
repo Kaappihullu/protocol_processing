@@ -28,19 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.m_networkView = new System.Windows.Forms.TreeView();
             this.m_addNetworkButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // treeView1
+            // m_networkView
             // 
-            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.m_networkView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeView1.Location = new System.Drawing.Point(12, 12);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(477, 371);
-            this.treeView1.TabIndex = 0;
+            this.m_networkView.Location = new System.Drawing.Point(12, 12);
+            this.m_networkView.Name = "m_networkView";
+            this.m_networkView.Size = new System.Drawing.Size(477, 371);
+            this.m_networkView.TabIndex = 0;
+            this.m_networkView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.m_networkView_NodeMouseDoubleClick);
             // 
             // m_addNetworkButton
             // 
@@ -58,7 +59,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(501, 437);
             this.Controls.Add(this.m_addNetworkButton);
-            this.Controls.Add(this.treeView1);
+            this.Controls.Add(this.m_networkView);
             this.Name = "MainForm";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -67,7 +68,7 @@
 
         #endregion
 
-        private System.Windows.Forms.TreeView treeView1;
+        private System.Windows.Forms.TreeView m_networkView;
         private System.Windows.Forms.Button m_addNetworkButton;
     }
 }

@@ -50,6 +50,7 @@ Int network_get_node_count(Pointer simulation_network){
 }
 
 network_node* network_get_node_by_index(Pointer simulation_network, Int index){
+	network_node* node = list_get_item(PSIMULATION_NETWORK(simulation_network)->m_node_list,index);
 	return list_get_item(PSIMULATION_NETWORK(simulation_network)->m_node_list,index);
 }
 
@@ -93,6 +94,11 @@ network_node* network_create_node(network_addr addr){
 Int network_node_get_id(network_node* node){
 	return node->node_id;
 }
+
+UInt8* network_node_get_address(network_node* node){
+	return (UInt8*)node->address;
+}
+
 
 void network_add_simulation_network(Pointer simulation_network, network_node* node){
 

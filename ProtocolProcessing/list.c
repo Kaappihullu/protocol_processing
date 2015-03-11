@@ -14,7 +14,8 @@ typedef struct{
 
 #define POINTER_SIZE 4
 
-#define MEMPOS(pointer,index) ((UInt)(pointer) + index*POINTER_SIZE)
+#define MEMPOS(pointer,index) (Pointer)(((UInt)(pointer)) + (index*POINTER_SIZE))
+#define MEMPOS_ITEM(pointer,index) *(Pointer*)MEMPOS(pointer,index)
 #define PLIST(list) ((LIST*)list)
 
 Pointer list_create(void){
@@ -28,7 +29,7 @@ Pointer list_create(void){
 void list_resize(Pointer list, Int nCapacity){
 
 	Pointer nHead = malloc(nCapacity*POINTER_SIZE);
-	if(!PLIST(list)->m_capacity){
+	if(PLIST(list)->m_capacity){
 		memcpy(nHead,PLIST(list)->m_head,PLIST(list)->m_capacity*POINTER_SIZE);
 	}
 
@@ -43,14 +44,15 @@ int list_get_count(Pointer list){
 }
 
 Pointer list_get_item(Pointer list, Int index){
-	return MEMPOS(PLIST(list)->m_head,index);
+	return MEMPOS_ITEM(PLIST(list)->m_head,index);
 }
 
 void list_add_item(Pointer list, Pointer item){
 
 	if(PLIST(list)->m_capacity == PLIST(list)->m_count){
-		list_resize(list,PLIST(list)->m_capacity*2);
+		list_resize(list,PLIST(list)->m_capacity*2 + 1);
 	}
 
-	MEMPOS(PLIST(list),PLIST(list)->m_count++);
+	memcpy(MEMPOS(PLIST(list)->m_head,PLIST(list)->m_count++),&item,4);
+	//PLIST(list)->m_count++;
 }
