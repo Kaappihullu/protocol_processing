@@ -28,9 +28,18 @@ namespace ProtocolProcessingGUI
              //yuck
             if (command[0] == "send")
             {
-                m_networkNode.Send(Encoding.Default.GetBytes(command[2]),command[1]);
+                m_networkNode.SendRaw(Encoding.Default.GetBytes(command[2]),command[1]);
             }
 
+        }
+
+        private void m_updateInterval_Tick(object sender, EventArgs e)
+        {
+            m_logBox.Clear();
+            foreach (SocketPacket packet in m_networkNode.ReceivedPackets)
+            {
+                m_logBox.AppendText(packet.ToString());
+            }
         }
     }
 }

@@ -10,3 +10,6 @@ network_node_get_id
 
 network_get_node_count
 network_create_node
+
+simulation_send_raw_socket
+simulation_receive_raw_socket

@@ -11,6 +11,7 @@ namespace ProtocolProcessingGUI
 {
     public partial class MainForm : Form
     {
+
         public MainForm()
         {
             InitializeComponent();
@@ -38,7 +39,21 @@ namespace ProtocolProcessingGUI
         {
             if (m_networkView.SelectedNode.Tag.GetType() == typeof(NetworkNode))
             {
-                new NetworkNodeForm((m_networkView.SelectedNode.Tag as NetworkNode)).Show();
+             //   new NetworkNodeForm((m_networkView.SelectedNode.Tag as NetworkNode)).Show();
+                NetworkNodeForm form = new NetworkNodeForm((m_networkView.SelectedNode.Tag as NetworkNode));
+                form.Show();
+            }
+        }
+
+        private void m_intervalTimer_Tick(object sender, EventArgs e)
+        {
+            foreach (SimulationNetwork network in SimulationNetwork.Networks)
+            {
+                foreach (NetworkNode node in network.NetworkNodes)
+                {
+                    SocketPacket packet = node.ReceiveRaw();
+
+                }
             }
         }
     }

@@ -48,7 +48,7 @@ typedef struct{
 
 #define PSOCKET(socket) ((SOCKET*)socket)
 
-#define SOCKET_PACKET_SIZE sizeof(SOCKET_PACKET)-4 //minus the payload pointer.
+#define SOCKET_PACKET_SIZE (sizeof(SOCKET_PACKET)-4) //minus the payload pointer.
 SOCKET_PACKET* create_ip_packet(network_addr addr, Int16 mtu){
 
 	SOCKET_PACKET* packet = malloc(sizeof(SOCKET_PACKET));
@@ -75,7 +75,7 @@ void socket_packet_set_payload(SOCKET_PACKET* packet, Int8* payload, Int16 paylo
 	packet->paket_payload = malloc(payload_size);
 	memcpy(packet->paket_payload,payload,payload_size);
 
-	packet->packet_len = SOCKET_PACKET_SIZE + payload_size;
+	packet->packet_len += payload_size;
 
 }
 
@@ -83,7 +83,7 @@ Int simulation_write_raw_socket(Pointer socket, Int8* data, Int size){
 	
 	UInt32 bytesWritten = 0;
 	
-	WriteFile(PSOCKET(socket)->m_connected_pipe.m_write,data,size,&bytesWritten,0);
+	WriteFile(PSOCKET(socket)->m_host_pipe.m_write,data,size,&bytesWritten,0);
 
 	return bytesWritten;
 }
@@ -98,29 +98,39 @@ Int simulation_read_raw_socket(Pointer socket,Int8* data , Int size){
 
 SOCKET_PACKET* simulation_receive_raw_socket(network_node* dst){
 	
-	SOCKET_PACKET packet;
+	SOCKET_PACKET* packet = malloc(sizeof(SOCKET_PACKET));
 	int read = 0;
+	
+	memset(packet,0,sizeof(SOCKET_PACKET));
 
-	read = simulation_read_raw_socket(dst->peer.socket,&packet,SOCKET_PACKET_SIZE);
-
-	if(packet.marker != IP_PACKET_MARKER){
+	if(simulation_socket_available(dst->peer.socket)){
+		read = simulation_read_raw_socket(dst->peer.socket,packet,SOCKET_PACKET_SIZE);
+	}
+	
+	if(packet->marker != IP_PACKET_MARKER){
 		return 0;
 	}
 
-	simulation_read_raw_socket(dst->peer.socket,packet.paket_payload,packet.packet_len);
 
+	packet->paket_payload = malloc(packet->packet_len - read + 1);
+
+	simulation_read_raw_socket(dst->peer.socket,packet->paket_payload,packet->packet_len - read);
+	packet->mtu --;
+	//is this really a good idea?
+	return packet;
 }
 
 Int simulation_send_raw_socket(network_node* src, Int8* data, Int size,network_addr dst){
 	
 	network_node* dst_node = network_get_node(src->simulation_network,dst);
 	SOCKET_PACKET* packet = create_ip_packet(dst,1000);
-	int err;
+	int err = 0;
 
 	//TODO: split if too big for one packet
 	socket_packet_set_payload(packet,data,size);
 
-	err = simulation_write_raw_socket(dst_node->peer.socket,packet,packet->packet_len);
+	err += simulation_write_raw_socket(dst_node->peer.socket,packet,SOCKET_PACKET_SIZE);
+	err += simulation_write_raw_socket(dst_node->peer.socket,packet->paket_payload,packet->packet_len-SOCKET_PACKET_SIZE);
 	free_ip_packet(packet);
 
 	return err;
@@ -139,7 +149,7 @@ Pointer simulation_socket(network_node* host ,simulation_socket_type type){
 	
 	socket->m_host_node = host;
 
-	CreatePipe(&socket->m_host_pipe.m_read,&socket->m_host_pipe.m_write,0,0);
+	CreatePipe(&socket->m_host_pipe.m_read,&socket->m_host_pipe.m_write,0,5000);
 
 	socket->m_type = type;
 

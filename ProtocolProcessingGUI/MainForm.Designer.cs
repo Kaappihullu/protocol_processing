@@ -28,8 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.m_networkView = new System.Windows.Forms.TreeView();
             this.m_addNetworkButton = new System.Windows.Forms.Button();
+            this.m_intervalTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // m_networkView
@@ -53,6 +55,11 @@
             this.m_addNetworkButton.UseVisualStyleBackColor = true;
             this.m_addNetworkButton.Click += new System.EventHandler(this.m_addNetworkButton_Click);
             // 
+            // m_intervalTimer
+            // 
+            this.m_intervalTimer.Enabled = true;
+            this.m_intervalTimer.Tick += new System.EventHandler(this.m_intervalTimer_Tick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -70,6 +77,7 @@
 
         private System.Windows.Forms.TreeView m_networkView;
         private System.Windows.Forms.Button m_addNetworkButton;
+        private System.Windows.Forms.Timer m_intervalTimer;
     }
 }
 

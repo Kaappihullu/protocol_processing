@@ -28,9 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.m_logBox = new System.Windows.Forms.TextBox();
             this.m_commandBox = new System.Windows.Forms.TextBox();
             this.m_commandButton = new System.Windows.Forms.Button();
+            this.m_updateInterval = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // m_logBox
@@ -59,6 +61,11 @@
             this.m_commandButton.UseVisualStyleBackColor = true;
             this.m_commandButton.Click += new System.EventHandler(this.m_commandButton_Click);
             // 
+            // m_updateInterval
+            // 
+            this.m_updateInterval.Enabled = true;
+            this.m_updateInterval.Tick += new System.EventHandler(this.m_updateInterval_Tick);
+            // 
             // NetworkNodeForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -79,5 +86,6 @@
         private System.Windows.Forms.TextBox m_logBox;
         private System.Windows.Forms.TextBox m_commandBox;
         private System.Windows.Forms.Button m_commandButton;
+        private System.Windows.Forms.Timer m_updateInterval;
     }
 }

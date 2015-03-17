@@ -12,6 +12,40 @@ namespace ProtocolProcessingGUI
         public const String DLL = "ProtocolProcessing.dll";
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    public class SocketPacket
+    {
+	    public Int32 Marker;
+
+	    public Int32 Addr;
+	    public Int16 Mtu;
+
+	    public Int16 PacketLen;
+
+	    public IntPtr PaketPayload;
+
+
+        public byte[] Payload
+        {
+            get
+            {
+                byte[] payloadBytes = new byte[PacketLen-12];
+
+                for (int i = 0; i < payloadBytes.Length; i++)
+                {
+                    payloadBytes[i] = Marshal.ReadByte(PaketPayload,i);
+                }
+                return payloadBytes;
+            }
+        }
+
+        public override string ToString()
+        {
+            return Encoding.Default.GetString(Payload);
+        }
+
+    }
+
     public class SimSocket
     {
         private IntPtr m_ptr;
@@ -57,10 +91,13 @@ namespace ProtocolProcessingGUI
     {
 
         private IntPtr m_ptr;
-
+        
+        private static Dictionary<String,List<SocketPacket>> m_packets = new Dictionary<String,List<SocketPacket>>();
+        
         public NetworkNode(String addr)
         {
             m_ptr = network_create_node(SimSocket.ConvertIPAddress(addr));
+            
         }
 
         public NetworkNode(IntPtr ptr)
@@ -68,13 +105,47 @@ namespace ProtocolProcessingGUI
             m_ptr = ptr;
         }
 
-        public void Send(byte[] data, String dst)
+        public void SendRaw(byte[] data, String dst)
         {
             simulation_send_raw_socket(m_ptr,data,data.Length,SimSocket.ConvertIPAddress(dst));
         }
 
-        public void Recv()
+        public void SendTcp(byte[] data, String dst)
         {
+
+        }
+
+        public SocketPacket ReceiveRaw()
+        {
+            IntPtr packet = simulation_receive_raw_socket(Ptr);
+            if (packet == IntPtr.Zero)
+            {
+                return null;
+            }
+
+            SocketPacket socketPacket = (SocketPacket)Marshal.PtrToStructure(packet,typeof(SocketPacket));
+
+            if (!m_packets.ContainsKey(Address))
+            {
+                m_packets.Add(Address,new List<SocketPacket>());
+            }
+            m_packets[Address].Add(socketPacket);
+
+            return socketPacket;
+        }
+
+        public SocketPacket[] ReceivedPackets
+        {
+            get
+            {
+
+                if (!m_packets.ContainsKey(Address))
+                {
+                    m_packets.Add(Address, new List<SocketPacket>());
+                }
+
+                return m_packets[Address].ToArray();
+            }
         }
 
         public String Address
@@ -110,6 +181,8 @@ namespace ProtocolProcessingGUI
     public class SimulationNetwork
     {
 
+        private static List<SimulationNetwork> m_networks = new List<SimulationNetwork>();
+
         private IntPtr m_ptr;
 
         [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
@@ -123,6 +196,14 @@ namespace ProtocolProcessingGUI
 
         [DllImport(PInvoke.DLL,CallingConvention=CallingConvention.Cdecl)]
         public static extern IntPtr network_get_node_by_index(IntPtr simulation_network, int index);
+
+        public static SimulationNetwork[] Networks
+        {
+            get
+            {
+                return m_networks.ToArray();
+            }
+        }
 
         public NetworkNode[] NetworkNodes
         {
@@ -142,6 +223,7 @@ namespace ProtocolProcessingGUI
         public SimulationNetwork()
         {
             m_ptr = network_create_simulation_network();
+            m_networks.Add(this);
         }
 
         public void AddNode(NetworkNode node)
