@@ -11,6 +11,10 @@
 	#include "list.h"
 #endif
 
+#ifndef _TCP_SOCKET_H_
+	#include "tcp_socket.h"
+#endif
+
 #include <malloc.h>
 #include <memory.h>
 
@@ -114,6 +118,50 @@ network_node_chain* network_create_node_chain(void){
 	memset(chain,0,sizeof(network_node_chain));
 
 	return chain;
+}
+
+Pointer network_get_listen(network_node* node, int port){
+	
+	int count = list_get_count(node->peer.bound_socket_list);
+	int i;
+	for(i = 0;i<count;i++){
+		Pointer socket = list_get_item(node->peer.bound_socket_list,i);
+		if(!is_listen_port(socket,port)){
+			return socket;
+		}
+	}
+	return 0;
+}
+
+void network_node_install_packet_sniffer(network_node* node, PACKET_SNIFFER sniffer){
+	node->sniffer = sniffer;
+}
+
+void network_do_loop(Pointer simulation_network){
+	
+	int count = network_get_node_count(simulation_network);
+	int i;
+
+	for(i=0;i<count;i++){
+		network_node* node = network_get_node_by_index(simulation_network,i);
+
+		SOCKET_PACKET* packet = simulation_receive_raw_socket(node);
+
+		if(!packet){
+			continue;
+		}
+
+		if(!is_tcp_segment(packet)){
+			TCP_SEGMENT* packet_tcp = packet->paket_payload;
+
+			Pointer socket = network_get_listen(node,packet_tcp->dest_port);
+			if(socket){
+				simulation_send(socket,packet->paket_payload + sizeof(TCP_SEGMENT),packet->packet_len - (SOCKET_PACKET_SIZE + sizeof(TCP_SEGMENT)));
+			}
+		}
+		//free_ip_packet(packet);
+	}
+
 }
 
 void network_free_node(network_node* node){

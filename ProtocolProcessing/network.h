@@ -17,6 +17,8 @@ typedef struct{
 #define ADDRESS(a,a1,a2,a3,a4) {a[0] = a1;a[1] = a2;a[2] = a3; a[3] = a4;}
 #define IS_SAME_ADDRESS(x,y) ((x[0] == y[0]) && (x[1] == y[1]) && (x[2] == y[2]) && (x[3] == y[3]))
 
+typedef void (__stdcall *PACKET_SNIFFER)(Pointer node, Pointer packet);
+
 typedef struct _network_node{
 
 	Int node_id;
@@ -25,6 +27,8 @@ typedef struct _network_node{
 	
 	network_addr address;
 	
+	PACKET_SNIFFER sniffer;
+
 	Pointer simulation_network;
 
 	//Pointer thread_handle;
@@ -58,10 +62,14 @@ Int network_node_get_id(network_node* node);
 Int network_get_node_count(Pointer simulation_network);
 network_node* network_get_node_by_index(Pointer simulation_network, Int index);
 
+void network_node_install_packet_sniffer(network_node* node, PACKET_SNIFFER sniffer);
 
 
 network_node* network_get_node(Pointer simulation_network, network_addr addr);
 Pointer network_create_simulation_network(void);
 void network_add_simulation_network(Pointer simulation_network, network_node* node);
+
+void network_do_loop(Pointer simulation_network);
+
 //void network_link_simulation_network(Pointer simulation_network1, Pointer simulation_network2);
 

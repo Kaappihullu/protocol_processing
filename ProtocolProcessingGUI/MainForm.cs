@@ -49,11 +49,7 @@ namespace ProtocolProcessingGUI
         {
             foreach (SimulationNetwork network in SimulationNetwork.Networks)
             {
-                foreach (NetworkNode node in network.NetworkNodes)
-                {
-                    SocketPacket packet = node.ReceiveRaw();
-
-                }
+                network.DoLoop();
             }
         }
     }

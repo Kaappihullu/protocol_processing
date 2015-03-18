@@ -86,6 +86,7 @@
     <ClCompile Include="router.c" />
     <ClCompile Include="simulation.c" />
     <ClCompile Include="simulation_socket.c" />
+    <ClCompile Include="tcp_socket.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="list.h" />

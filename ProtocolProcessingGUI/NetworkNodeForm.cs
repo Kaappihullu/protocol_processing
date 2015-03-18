@@ -38,7 +38,7 @@ namespace ProtocolProcessingGUI
             m_logBox.Clear();
             foreach (SocketPacket packet in m_networkNode.ReceivedPackets)
             {
-                m_logBox.AppendText(packet.ToString());
+                m_logBox.AppendText(packet.ToString() + "\r\n");
             }
         }
     }

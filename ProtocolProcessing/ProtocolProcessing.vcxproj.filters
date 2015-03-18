@@ -45,6 +45,9 @@
     <ClCompile Include="simulation_socket.c">
       <Filter>Source Files\Simulation</Filter>
     </ClCompile>
+    <ClCompile Include="tcp_socket.c">
+      <Filter>Source Files\Simulation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="simulation.h">

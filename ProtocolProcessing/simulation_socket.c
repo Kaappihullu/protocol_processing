@@ -8,6 +8,9 @@
 
 #include "simulation_socket.h"
 
+#ifndef _LIST_H_
+	#include "list.h"
+#endif
 
 
 typedef Int (*socket_read_func)(Pointer,Int8*,Int);
@@ -25,7 +28,6 @@ typedef struct{
 	simulation_socket_type m_type;
 
 	SOCKET_PIPE m_host_pipe;
-	SOCKET_PIPE m_connected_pipe;
 	//in a sense this does not belong here, but the implementation demands it.
 	network_node* m_host_node;
 
@@ -37,9 +39,6 @@ typedef struct{
 typedef struct{
 	SOCKET m_socket;
 
-	socket_connect_func m_connect;
-	socket_connect_func m_disconnect;
-
 	Int m_port;
 	Int m_listen;
 
@@ -48,7 +47,6 @@ typedef struct{
 
 #define PSOCKET(socket) ((SOCKET*)socket)
 
-#define SOCKET_PACKET_SIZE (sizeof(SOCKET_PACKET)-4) //minus the payload pointer.
 SOCKET_PACKET* create_ip_packet(network_addr addr, Int16 mtu){
 
 	SOCKET_PACKET* packet = malloc(sizeof(SOCKET_PACKET));
@@ -111,12 +109,15 @@ SOCKET_PACKET* simulation_receive_raw_socket(network_node* dst){
 		return 0;
 	}
 
-
 	packet->paket_payload = malloc(packet->packet_len - read + 1);
 
 	simulation_read_raw_socket(dst->peer.socket,packet->paket_payload,packet->packet_len - read);
 	packet->mtu --;
-	//is this really a good idea?
+	
+	if(dst->sniffer){
+		dst->sniffer(dst,packet);
+	}
+
 	return packet;
 }
 
@@ -159,4 +160,32 @@ Pointer simulation_socket(network_node* host ,simulation_socket_type type){
 Int simulation_connect(Pointer socket, network_addr addr){
 	//PSOCKET(socket)->m_connect(socket,addr);
 	return 0;
+}
+
+Int simulation_send(Pointer socket, Int8* data, Int size){
+	return simulation_write_raw_socket(socket,data,size);
+}
+
+Int simulation_recv(Pointer socket, Int8* data, Int size){
+	return simulation_read_raw_socket(socket,data,size);
+}
+
+Int is_listen_port(Pointer socket, int port){
+	if(((BOUND_SOCKET*)socket)->m_port == port){
+		return 0;
+	}
+	return -1;
+}
+
+void tcp_listen(Pointer socket, Int port){	
+	
+	BOUND_SOCKET* bound_socket = malloc(sizeof(BOUND_SOCKET));
+	memset(bound_socket,0,sizeof(BOUND_SOCKET));
+
+	memcpy(bound_socket,socket,sizeof(SOCKET));
+
+	bound_socket->m_listen = 1;
+	bound_socket->m_port = port;
+
+	list_add_item(PSOCKET(socket)->m_host_node->peer.bound_socket_list,bound_socket);
 }

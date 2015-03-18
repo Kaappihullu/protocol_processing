@@ -93,11 +93,16 @@ namespace ProtocolProcessingGUI
         private IntPtr m_ptr;
         
         private static Dictionary<String,List<SocketPacket>> m_packets = new Dictionary<String,List<SocketPacket>>();
-        
+
+        public delegate void PacketSniffer(IntPtr network_node, SocketPacket packet);
+        //to force the GC not to release this object.
+        private static PacketSniffer m_sniffer = onPacketSniffer;
+
+
         public NetworkNode(String addr)
         {
             m_ptr = network_create_node(SimSocket.ConvertIPAddress(addr));
-            
+            installPacketSniffer(m_sniffer);
         }
 
         public NetworkNode(IntPtr ptr)
@@ -105,14 +110,10 @@ namespace ProtocolProcessingGUI
             m_ptr = ptr;
         }
 
+
         public void SendRaw(byte[] data, String dst)
         {
             simulation_send_raw_socket(m_ptr,data,data.Length,SimSocket.ConvertIPAddress(dst));
-        }
-
-        public void SendTcp(byte[] data, String dst)
-        {
-
         }
 
         public SocketPacket ReceiveRaw()
@@ -125,16 +126,23 @@ namespace ProtocolProcessingGUI
 
             SocketPacket socketPacket = (SocketPacket)Marshal.PtrToStructure(packet,typeof(SocketPacket));
 
-            if (!m_packets.ContainsKey(Address))
-            {
-                m_packets.Add(Address,new List<SocketPacket>());
-            }
-            m_packets[Address].Add(socketPacket);
+            ReceivedPackets.Add(socketPacket);
 
             return socketPacket;
         }
 
-        public SocketPacket[] ReceivedPackets
+        private static void onPacketSniffer(IntPtr network_node, SocketPacket packet)
+        {
+            NetworkNode node = new NetworkNode(network_node);
+            node.ReceivedPackets.Add(packet);
+        }
+
+        private void installPacketSniffer(PacketSniffer sniffer)
+        {
+            network_node_install_packet_sniffer(Ptr,Marshal.GetFunctionPointerForDelegate(sniffer));
+        }
+
+        public List<SocketPacket> ReceivedPackets
         {
             get
             {
@@ -144,7 +152,7 @@ namespace ProtocolProcessingGUI
                     m_packets.Add(Address, new List<SocketPacket>());
                 }
 
-                return m_packets[Address].ToArray();
+                return m_packets[Address];
             }
         }
 
@@ -176,6 +184,9 @@ namespace ProtocolProcessingGUI
         [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr simulation_receive_raw_socket(IntPtr dst);
 
+        [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void network_node_install_packet_sniffer(IntPtr network_node,IntPtr sniffer);
+
     }
 
     public class SimulationNetwork
@@ -184,18 +195,6 @@ namespace ProtocolProcessingGUI
         private static List<SimulationNetwork> m_networks = new List<SimulationNetwork>();
 
         private IntPtr m_ptr;
-
-        [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr network_create_simulation_network();
-
-        [DllImport(PInvoke.DLL,CallingConvention=CallingConvention.Cdecl)]
-        public static extern IntPtr network_add_simulation_network(IntPtr simulation_network, IntPtr network_node);
-
-        [DllImport(PInvoke.DLL,CallingConvention=CallingConvention.Cdecl)]
-        public static extern int network_get_node_count(IntPtr simulation_network);
-
-        [DllImport(PInvoke.DLL,CallingConvention=CallingConvention.Cdecl)]
-        public static extern IntPtr network_get_node_by_index(IntPtr simulation_network, int index);
 
         public static SimulationNetwork[] Networks
         {
@@ -220,16 +219,36 @@ namespace ProtocolProcessingGUI
             }
         }
 
+
+        public void AddNode(NetworkNode node)
+        {
+            network_add_simulation_network(m_ptr, node.Ptr);
+        }
+
+        public void DoLoop()
+        {
+            network_do_loop(m_ptr);
+        }
+
         public SimulationNetwork()
         {
             m_ptr = network_create_simulation_network();
             m_networks.Add(this);
         }
 
-        public void AddNode(NetworkNode node)
-        {
-            network_add_simulation_network(m_ptr,node.Ptr);
-        }
+        [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr network_create_simulation_network();
 
+        [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr network_add_simulation_network(IntPtr simulation_network, IntPtr network_node);
+
+        [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int network_get_node_count(IntPtr simulation_network);
+
+        [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr network_get_node_by_index(IntPtr simulation_network, int index);
+
+        [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void network_do_loop(IntPtr simulation_network);
     }
 }

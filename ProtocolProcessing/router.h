@@ -11,12 +11,38 @@
 	#include "network.h"
 #endif
 
+
+
+typedef struct{
+
+	network_addr entry_addr;
+	network_addr route_addr;
+
+} ROUTE_ADVERT_ENTRY;
+
+typedef struct{
+
+	Pointer advert_socket;
+	Pointer route_advert_list;
+
+
+	network_node* node;
+
+} ROUTER;
+
 /*
- * TODO: Rename? or delete
+ * A very simplistic replacement for BGP
  */
 
-Pointer router_create(void);
+ROUTER* router_create(void);
 
-network_addr* router_get_address(Pointer peer);
+void router_init(ROUTER* router, network_node* node);
 
-void router_set_address(Pointer peer, network_addr addr);
+void router_do_loop(ROUTER* router);
+
+network_addr* router_get_route_address(network_addr addr);
+
+//advertise that we can route to this address.
+void router_advertise_route(network_addr advertised_addr, network_addr addr);
+
+

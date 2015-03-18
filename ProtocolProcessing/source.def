@@ -13,3 +13,6 @@ network_create_node
 
 simulation_send_raw_socket
 simulation_receive_raw_socket
+
+network_do_loop
+network_node_install_packet_sniffer
