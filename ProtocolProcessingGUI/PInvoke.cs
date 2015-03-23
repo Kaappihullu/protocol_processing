@@ -13,6 +13,16 @@ namespace ProtocolProcessingGUI
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    public class NodeRoute
+    {
+        public Int32 EntryAddr;
+        public Int32 RouteAddr;
+
+        public Int32 hops;
+
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     public class SocketPacket
     {
 	    public Int32 Marker;
@@ -29,20 +39,31 @@ namespace ProtocolProcessingGUI
         {
             get
             {
-                byte[] payloadBytes = new byte[PacketLen-12];
+                byte[] payloadBytes = new byte[PacketLen-(IsTCP ?  24 : 12)];
 
                 for (int i = 0; i < payloadBytes.Length; i++)
                 {
-                    payloadBytes[i] = Marshal.ReadByte(PaketPayload,i);
+                    payloadBytes[i] = Marshal.ReadByte(PaketPayload,i + (IsTCP ? 12 : 0));
                 }
                 return payloadBytes;
             }
         }
 
+        public bool IsTCP
+        {
+            get
+            {
+                return (is_tcp_segment(this) == 0);
+            }
+        }
+
         public override string ToString()
         {
-            return Encoding.Default.GetString(Payload);
+            return IsTCP ? "TCP: " + Encoding.Default.GetString(Payload) : Encoding.Default.GetString(Payload);
         }
+
+        [DllImport(PInvoke.DLL,CallingConvention=CallingConvention.Cdecl)]
+        private extern static Int32 is_tcp_segment(SocketPacket packet);
 
     }
 
@@ -92,6 +113,8 @@ namespace ProtocolProcessingGUI
 
         private IntPtr m_ptr;
         
+
+
         private static Dictionary<String,List<SocketPacket>> m_packets = new Dictionary<String,List<SocketPacket>>();
 
         public delegate void PacketSniffer(IntPtr network_node, SocketPacket packet);
@@ -114,6 +137,15 @@ namespace ProtocolProcessingGUI
         public void SendRaw(byte[] data, String dst)
         {
             simulation_send_raw_socket(m_ptr,data,data.Length,SimSocket.ConvertIPAddress(dst));
+        }
+
+        public void SendHost(byte[] data, String dst)
+        {
+            char[] splitChar = {':'};
+            String[] dstAddr = dst.Split(splitChar);
+
+            simulation_send_host(m_ptr,SimSocket.ConvertIPAddress(dstAddr[0]),data,data.Length,Convert.ToInt16(dstAddr[1]));
+
         }
 
         public SocketPacket ReceiveRaw()
@@ -181,11 +213,23 @@ namespace ProtocolProcessingGUI
         [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
         private static extern Int32 simulation_send_raw_socket(IntPtr src, byte[] data, Int32 size, byte[] dst);
 
+        [DllImport(PInvoke.DLL,CallingConvention = CallingConvention.Cdecl)]
+        private static extern Int32 simulation_send_host(IntPtr sender, byte[] addr, byte[] data, Int32 size,Int16 port);
+
         [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr simulation_receive_raw_socket(IntPtr dst);
 
         [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
         private static extern void network_node_install_packet_sniffer(IntPtr network_node,IntPtr sniffer);
+
+        [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void network_link_network(IntPtr node1, IntPtr node2);
+
+        [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int network_get_route_count(IntPtr node);
+
+        [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
+        private static extern NodeRoute network_get_route_by_index(IntPtr node, int index);
 
     }
 

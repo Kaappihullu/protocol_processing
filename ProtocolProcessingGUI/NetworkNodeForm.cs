@@ -28,7 +28,14 @@ namespace ProtocolProcessingGUI
              //yuck
             if (command[0] == "send")
             {
-                m_networkNode.SendRaw(Encoding.Default.GetBytes(command[2]),command[1]);
+                if (command[1].Contains(":"))
+                {
+                    m_networkNode.SendHost(Encoding.Default.GetBytes(command[2]),command[1]);
+                }
+                else
+                {
+                    m_networkNode.SendRaw(Encoding.Default.GetBytes(command[2]), command[1]);
+                }
             }
 
         }

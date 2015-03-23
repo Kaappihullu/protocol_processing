@@ -40,11 +40,14 @@ void free_ip_packet(SOCKET_PACKET* packet);
 Pointer simulation_socket(network_node* host,simulation_socket_type type);
 int simulation_socket_available(Pointer socket);
 //Int simulation_send(network_node* src, Int8* data, Int size, network_addr addr);
+Int simulation_send_raw_socket_node(network_node* src, Int8* data, Int size, network_node* node);
 Int simulation_send_raw_socket(network_node* src, Int8* data, Int size, network_addr addr);
 SOCKET_PACKET* simulation_receive_raw_socket(network_node* dst);
 
 Int simulation_send(Pointer socket, Int8* data, Int size);
 Int simulation_recv(Pointer socket, Int8* data, Int size);
+
+Int simulation_send_host(network_node* sender, network_addr dst, Int8* data, Int size, Int16 port);
 
 void tcp_listen(Pointer socket, int port);
 

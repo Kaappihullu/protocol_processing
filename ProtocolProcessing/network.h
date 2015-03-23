@@ -31,6 +31,8 @@ typedef struct _network_node{
 
 	Pointer simulation_network;
 
+	Pointer node_router;
+
 	//Pointer thread_handle;
 
 	struct{
@@ -64,6 +66,10 @@ network_node* network_get_node_by_index(Pointer simulation_network, Int index);
 
 void network_node_install_packet_sniffer(network_node* node, PACKET_SNIFFER sniffer);
 
+void network_link_network(network_node* node1, network_node* node2);
+
+int network_get_route_count(network_node* node);
+Pointer network_get_route_by_index(network_node* node, Int index);
 
 network_node* network_get_node(Pointer simulation_network, network_addr addr);
 Pointer network_create_simulation_network(void);

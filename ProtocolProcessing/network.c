@@ -15,6 +15,10 @@
 	#include "tcp_socket.h"
 #endif
 
+#ifndef _ROUTER_H_
+	#include "router.h"
+#endif
+
 #include <malloc.h>
 #include <memory.h>
 
@@ -47,6 +51,18 @@ Pointer network_create_simulation_network(void){
 	simulation_network->m_node_list = list_create();
 
 	return simulation_network;
+}
+
+void network_link_network(network_node* node1, network_node* node2){
+	router_node_link(node1->node_router,node2);
+}
+
+int network_get_route_count(network_node* node){
+	return list_get_count(((ROUTER*)node->node_router)->route_advert_list);
+}
+
+Pointer network_get_route_by_index(network_node* node, Int index){
+	return list_get_item(((ROUTER*)node->node_router)->node,index);	
 }
 
 Int network_get_node_count(Pointer simulation_network){
@@ -91,6 +107,9 @@ network_node* network_create_node(network_addr addr){
 	
 	node->peer.socket = simulation_socket(node,socket_type_raw);
 	node->peer.bound_socket_list = list_create();
+
+	node->node_router = router_create();
+	router_init(node->node_router,node);
 
 	return node;
 }
@@ -159,6 +178,7 @@ void network_do_loop(Pointer simulation_network){
 				simulation_send(socket,packet->paket_payload + sizeof(TCP_SEGMENT),packet->packet_len - (SOCKET_PACKET_SIZE + sizeof(TCP_SEGMENT)));
 			}
 		}
+		router_do_loop(node->node_router);
 		//free_ip_packet(packet);
 	}
 

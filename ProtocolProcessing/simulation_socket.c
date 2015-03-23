@@ -12,6 +12,9 @@
 	#include "list.h"
 #endif
 
+#ifndef _TCP_SOCKET_H_
+	#include "tcp_socket.h"
+#endif
 
 typedef Int (*socket_read_func)(Pointer,Int8*,Int);
 typedef Int (*socket_write_func)(Pointer,Int8*,Int);
@@ -175,6 +178,18 @@ Int is_listen_port(Pointer socket, int port){
 		return 0;
 	}
 	return -1;
+}
+
+Int simulation_send_host(network_node* sender, network_addr dst, Int8* data, Int len, Int16 port){
+	
+	TCP_SEGMENT* segment = malloc(sizeof(TCP_SEGMENT)+len);
+	segment->marker = TCP_MARKER;
+	segment->dest_port = port;
+	memcpy(segment->src_addr,sender->address,sizeof(network_addr));
+	
+	memcpy((Pointer)((UInt32)segment + (UInt32)sizeof(TCP_SEGMENT)),data,len);
+
+	return simulation_send_raw_socket(sender,segment,sizeof(TCP_SEGMENT)+len,dst);
 }
 
 void tcp_listen(Pointer socket, Int port){	
