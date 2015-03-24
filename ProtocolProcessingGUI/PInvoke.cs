@@ -18,8 +18,23 @@ namespace ProtocolProcessingGUI
         public Int32 EntryAddr;
         public Int32 RouteAddr;
 
-        public Int32 hops;
+        public Int32 Hops;
 
+
+        public String EntryIp
+        {
+            get
+            {
+                return SimSocket.ConvertIPAddress(BitConverter.GetBytes(EntryAddr));
+            }
+        }
+        public String RouteIp
+        {
+            get
+            {
+                return SimSocket.ConvertIPAddress(BitConverter.GetBytes(RouteAddr));
+            }
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -204,6 +219,25 @@ namespace ProtocolProcessingGUI
             }
         }
 
+        public void Link(NetworkNode node)
+        {
+            network_link_network(m_ptr,node.m_ptr);
+        }
+
+        public NodeRoute[] NetworkRoutes
+        {
+            get
+            {
+                NodeRoute[] routes = new NodeRoute[network_get_route_count(m_ptr)];
+
+                for (int i = 0; i < routes.Length; i++)
+                {
+                    routes[i] = (NodeRoute)Marshal.PtrToStructure(network_get_route_by_index(m_ptr,i),typeof(NodeRoute));
+                }
+                return routes;
+            }
+        }
+
         [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr network_node_get_address(IntPtr node);
 
@@ -226,10 +260,10 @@ namespace ProtocolProcessingGUI
         private static extern void network_link_network(IntPtr node1, IntPtr node2);
 
         [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
-        private static extern int network_get_route_count(IntPtr node);
+        private static extern Int32 network_get_route_count(IntPtr node);
 
         [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
-        private static extern NodeRoute network_get_route_by_index(IntPtr node, int index);
+        private static extern IntPtr network_get_route_by_index(IntPtr node, int index);
 
     }
 

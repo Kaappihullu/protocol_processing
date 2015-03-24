@@ -62,7 +62,7 @@ int network_get_route_count(network_node* node){
 }
 
 Pointer network_get_route_by_index(network_node* node, Int index){
-	return list_get_item(((ROUTER*)node->node_router)->node,index);	
+	return list_get_item(((ROUTER*)node->node_router)->route_advert_list,index);	
 }
 
 Int network_get_node_count(Pointer simulation_network){

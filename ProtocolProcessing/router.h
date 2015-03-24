@@ -44,11 +44,13 @@ void router_init(ROUTER* router, network_node* node);
 
 void router_do_loop(ROUTER* router);
 
+void router_init_route_table(ROUTER* router);
+
 network_node* router_get_route_node(network_addr addr);
 
 void router_node_link(ROUTER* router, network_node* node);
 
 //advertise that we can route to this address.
 void router_advertise_route(ROUTER* router ,ROUTE_ADVERT_ENTRY entry);
-
+void router_advertise_all(ROUTER* router);
 

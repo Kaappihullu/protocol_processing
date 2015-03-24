@@ -64,6 +64,7 @@
             // m_updateInterval
             // 
             this.m_updateInterval.Enabled = true;
+            this.m_updateInterval.Interval = 500;
             this.m_updateInterval.Tick += new System.EventHandler(this.m_updateInterval_Tick);
             // 
             // NetworkNodeForm

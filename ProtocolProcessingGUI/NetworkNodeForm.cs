@@ -17,8 +17,10 @@ namespace ProtocolProcessingGUI
         public NetworkNodeForm(NetworkNode node)
         {
             m_networkNode = node;
-
+            NodeRoute[] routes = node.NetworkRoutes;
             InitializeComponent();
+            this.Text = node.Address;
+            
         }
 
         private void m_commandButton_Click(object sender, EventArgs e)
@@ -43,6 +45,12 @@ namespace ProtocolProcessingGUI
         private void m_updateInterval_Tick(object sender, EventArgs e)
         {
             m_logBox.Clear();
+
+            foreach(NodeRoute route in m_networkNode.NetworkRoutes)
+            {
+                m_logBox.AppendText(route.EntryIp + " via " + route.RouteIp + " hops " + route.Hops + "\r\n");
+            }
+
             foreach (SocketPacket packet in m_networkNode.ReceivedPackets)
             {
                 m_logBox.AppendText(packet.ToString() + "\r\n");

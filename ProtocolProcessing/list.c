@@ -47,6 +47,10 @@ Pointer list_get_item(Pointer list, Int index){
 	return MEMPOS_ITEM(PLIST(list)->m_head,index);
 }
 
+void list_set_item(Pointer list, Pointer item, Int index){
+	memcpy(MEMPOS(PLIST(list)->m_head,index),&item,4);
+}
+
 void list_add_item(Pointer list, Pointer item){
 
 	if(PLIST(list)->m_capacity == PLIST(list)->m_count){

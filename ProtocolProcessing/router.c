@@ -29,7 +29,60 @@ ROUTER* router_create(void){
 	return router;
 }
 
+void router_init_route_table(ROUTER* router){
+	int i, c = network_get_node_count(router->node->simulation_network);
+	
+	for(i=0;i<c;i++){
+		int index;
+		network_node* node = network_get_node_by_index(router->node->simulation_network,i);
+		ROUTE_ADVERT_ENTRY* entry = malloc(sizeof(ROUTE_ADVERT_ENTRY));
+
+		if(IS_SAME_ADDRESS(node->address,router->node->address)){
+			continue;
+		}
+
+		entry->hops = 1;
+		memcpy(entry->entry_addr,node->address,4);
+		memcpy(entry->route_addr,router->node->address,4);
+
+		index = router_get_entry_index(router,entry);
+		if(index == -1){
+			list_add_item(router->route_advert_list,entry);
+		}else{
+			free(entry);
+		}
+
+	}
+
+	c = network_get_node_count(router->router_network);
+	
+	for(i=0;i<c;i++){
+		int index;
+		network_node* node = network_get_node_by_index(router->router_network,i);
+		ROUTE_ADVERT_ENTRY* entry = malloc(sizeof(ROUTE_ADVERT_ENTRY));
+
+		if(IS_SAME_ADDRESS(node->address,router->node->address)){
+			continue;
+		}
+
+		entry->hops = 1;
+		memcpy(entry->entry_addr,node->address,4);
+		memcpy(entry->route_addr,router->node->address,4);
+
+		index = router_get_entry_index(router,entry);
+		if(index == -1){
+			list_add_item(router->route_advert_list,entry);
+		}else{
+			free(entry);
+		}
+
+	}
+
+
+}
+
 void router_init(ROUTER* router, network_node* node){
+	
 	router->node = node;
 	router->advert_socket = simulation_socket(node,socket_type_tcp);
 
@@ -37,17 +90,28 @@ void router_init(ROUTER* router, network_node* node){
 
 	tcp_listen(router->advert_socket,ADVERTISE_PORT);
 	
+
+
+}
+
+network_node* router_get_route_node(ROUTER* router, network_addr dst){
+	
+	return 0;
 }
 
 void router_node_link(ROUTER* router, network_node* node){
 
-	ROUTE_ADVERT_ENTRY entry;
+	ROUTE_ADVERT_ENTRY entry ;//malloc(sizeof(ROUTE_ADVERT_ENTRY));
 
+	Pointer tmp_network = node->simulation_network;
 	network_add_simulation_network(router->router_network,node);
+	node->simulation_network = tmp_network;
 
 	memcpy(entry.entry_addr,node->address,4);
 	memcpy(entry.route_addr,router->node->address,4);
 	entry.hops = 1;
+
+//	list_add_item(router->route_advert_list,entry);
 
 	router_advertise_route(router,entry);
 
@@ -62,14 +126,31 @@ void router_advertise_all(ROUTER* router){
 		router_advertise_route(router,*entry);
 	}
 
+	c = network_get_node_count(router->node->simulation_network);
+
+	for(i=0;i<c;i++){
+		ROUTE_ADVERT_ENTRY entry;
+		network_node* node = network_get_node_by_index(router->node->simulation_network,i);
+
+		entry.hops = 1;
+		memcpy(entry.route_addr,router->node->address,4);
+		memcpy(entry.entry_addr,node->address,4);
+		router_advertise_route(router,entry);
+	}
+
 }
 
-void router_advertise_route(ROUTER* router, ROUTE_ADVERT_ENTRY entry){
+void router_advertise_route(ROUTER* router ,ROUTE_ADVERT_ENTRY entry){
 	
 	int i,c = network_get_node_count(router->router_network);
+	Pointer tmp_network;
 
 	entry.hops ++;
 	memcpy(entry.route_addr,router->node->address,4);
+
+	//yeah...
+	tmp_network = router->node->simulation_network;
+	router->node->simulation_network = router->router_network;
 
 	for(i=0;i<c;i++){
 		network_node* node = network_get_node_by_index(router->router_network,i);
@@ -77,11 +158,10 @@ void router_advertise_route(ROUTER* router, ROUTE_ADVERT_ENTRY entry){
 		if(node == router->node){
 			continue;
 		}
-
 		simulation_send_host(router->node,node->address,&entry,sizeof(ROUTE_ADVERT_ENTRY),ADVERTISE_PORT);
 
 	}
-
+	router->node->simulation_network = tmp_network;
 	c = network_get_node_count(router->node->simulation_network);
 	
 	for(i=0;i<c;i++){
@@ -114,12 +194,35 @@ Int router_get_entry_index(ROUTER* router, ROUTE_ADVERT_ENTRY* entry){
 
 void router_do_loop(ROUTER* router){
 
+	router_init_route_table(router);
+
 	if(simulation_socket_available(router->advert_socket)){
 		ROUTE_ADVERT_ENTRY* entry = malloc(sizeof(ROUTE_ADVERT_ENTRY));
+		int index;
 		simulation_recv(router->advert_socket,entry,sizeof(ROUTE_ADVERT_ENTRY));
-		if(router_get_entry_index(router,entry) == -1){
+		
+		if(IS_SAME_ADDRESS(entry->route_addr,entry->entry_addr) || IS_SAME_ADDRESS(router->node->address,entry->entry_addr)){
+			free(entry);
+			return;
+		}
+		
+		index = router_get_entry_index(router,entry);
+
+		if(index == -1){
+			
 			list_add_item(router->route_advert_list,entry);
 			router_advertise_all(router);
+		}else{
+			ROUTE_ADVERT_ENTRY* list_entry = list_get_item(router->route_advert_list,index);
+
+			if(list_entry->hops > entry->hops){
+				
+				free(list_get_item(router->route_advert_list,index));
+				list_set_item(router->route_advert_list,list_entry,index);
+				
+			}else{
+				free(entry);
+			}
 		}
 	}
 
