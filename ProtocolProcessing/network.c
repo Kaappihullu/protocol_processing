@@ -169,8 +169,11 @@ void network_do_loop(Pointer simulation_network){
 		if(!packet){
 			continue;
 		}
-
-		if(!is_tcp_segment(packet)){
+		//packet needs to be routed.
+		if(!IS_SAME_ADDRESS(packet->addr,node->address))
+		{
+			simulation_send_packet(node,packet);
+		}else if(!is_tcp_segment(packet)){
 			TCP_SEGMENT* packet_tcp = packet->paket_payload;
 
 			Pointer socket = network_get_listen(node,packet_tcp->dest_port);

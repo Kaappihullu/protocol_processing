@@ -16,6 +16,10 @@
 	#include "tcp_socket.h"
 #endif
 
+#ifndef _ROUTER_H_
+	#include "router.h"
+#endif
+
 typedef Int (*socket_read_func)(Pointer,Int8*,Int);
 typedef Int (*socket_write_func)(Pointer,Int8*,Int);
 
@@ -126,16 +130,32 @@ SOCKET_PACKET* simulation_receive_raw_socket(network_node* dst){
 
 Int simulation_send_raw_socket(network_node* src, Int8* data, Int size,network_addr dst){
 	
-	network_node* dst_node = network_get_node(src->simulation_network,dst);
+//network_get_node(src->simulation_network,dst);
 	SOCKET_PACKET* packet = create_ip_packet(dst,1000);
 	int err = 0;
 
 	//TODO: split if too big for one packet
 	socket_packet_set_payload(packet,data,size);
 
-	err += simulation_write_raw_socket(dst_node->peer.socket,packet,SOCKET_PACKET_SIZE);
-	err += simulation_write_raw_socket(dst_node->peer.socket,packet->paket_payload,packet->packet_len-SOCKET_PACKET_SIZE);
+	//err += simulation_write_raw_socket(dst_node->peer.socket,packet,SOCKET_PACKET_SIZE);
+	//err += simulation_write_raw_socket(dst_node->peer.socket,packet->paket_payload,packet->packet_len-SOCKET_PACKET_SIZE);
+
+	err = simulation_send_packet(src,packet);
 	free_ip_packet(packet);
+
+	return err;
+}
+
+Int simulation_send_packet(network_node* src ,SOCKET_PACKET* packet){
+	
+	int err = 0;
+	network_node* dst = router_get_route_node(src->node_router,packet->addr);
+	
+	//if(dst )
+
+
+	err += simulation_write_raw_socket(dst->peer.socket,packet,SOCKET_PACKET_SIZE);
+	err += simulation_write_raw_socket(dst->peer.socket,packet->paket_payload,packet->packet_len-SOCKET_PACKET_SIZE);
 
 	return err;
 }
@@ -153,7 +173,7 @@ Pointer simulation_socket(network_node* host ,simulation_socket_type type){
 	
 	socket->m_host_node = host;
 
-	CreatePipe(&socket->m_host_pipe.m_read,&socket->m_host_pipe.m_write,0,5000);
+	CreatePipe(&socket->m_host_pipe.m_read,&socket->m_host_pipe.m_write,0,50000);
 
 	socket->m_type = type;
 

@@ -94,9 +94,54 @@ void router_init(ROUTER* router, network_node* node){
 
 }
 
+ROUTE_ADVERT_ENTRY router_get_route(ROUTER* router, network_addr dst){
+	
+	int i,c = list_get_count(router->route_advert_list);
+
+	ROUTE_ADVERT_ENTRY selected_entry;
+	selected_entry.hops = 100;
+
+	for(i=0;i<c;i++){
+		ROUTE_ADVERT_ENTRY* entry = list_get_item(router->route_advert_list,i);
+		
+		if(IS_SAME_ADDRESS(entry->entry_addr,dst)){
+			if(selected_entry.hops > entry->hops){
+				selected_entry = *entry;
+			}
+		}
+
+	}
+	return selected_entry;
+}
+
 network_node* router_get_route_node(ROUTER* router, network_addr dst){
 	
-	return 0;
+	ROUTE_ADVERT_ENTRY entry = router_get_route(router,dst);
+	network_node* node = 0;
+	//no record in routing table.
+	if(entry.hops == 100){
+		node = network_get_node(router->node->simulation_network,dst);
+		if(node == 0){
+			node = network_get_node(router->router_network,dst);
+		}
+	}else if(IS_SAME_ADDRESS(entry.route_addr,router->node->address)){
+		node = network_get_node(router->node->simulation_network,entry.entry_addr);
+
+		if(node == 0){
+			node = network_get_node(router->router_network,entry.entry_addr);
+		}
+	}else{//destination is not reachable directly from this node.
+		node = network_get_node(router->router_network,entry.route_addr);
+		if(node == 0){
+			node = network_get_node(router->node->simulation_network,entry.route_addr);
+		}
+	}
+
+	if(node == 0){
+		return 0;
+	}
+
+	return node;
 }
 
 void router_node_link(ROUTER* router, network_node* node){
@@ -149,8 +194,8 @@ void router_advertise_route(ROUTER* router ,ROUTE_ADVERT_ENTRY entry){
 	memcpy(entry.route_addr,router->node->address,4);
 
 	//yeah...
-	tmp_network = router->node->simulation_network;
-	router->node->simulation_network = router->router_network;
+	//tmp_network = router->node->simulation_network;
+	//router->node->simulation_network = router->router_network;
 
 	for(i=0;i<c;i++){
 		network_node* node = network_get_node_by_index(router->router_network,i);
@@ -161,7 +206,7 @@ void router_advertise_route(ROUTER* router ,ROUTE_ADVERT_ENTRY entry){
 		simulation_send_host(router->node,node->address,&entry,sizeof(ROUTE_ADVERT_ENTRY),ADVERTISE_PORT);
 
 	}
-	router->node->simulation_network = tmp_network;
+	//router->node->simulation_network = tmp_network;
 	c = network_get_node_count(router->node->simulation_network);
 	
 	for(i=0;i<c;i++){

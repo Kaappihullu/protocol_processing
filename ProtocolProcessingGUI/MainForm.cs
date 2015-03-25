@@ -17,9 +17,32 @@ namespace ProtocolProcessingGUI
             InitializeComponent();
         }
 
+        private TreeNode createNetworkNode(String prefix, int count)
+        {
+
+            SimulationNetwork network = new SimulationNetwork();
+
+            for (int i = 0; i < count; i++)
+            {
+                network.AddNode(new NetworkNode(prefix+"."+(i+1)));
+            }
+
+
+            TreeNode treeNode = new TreeNode("network");
+            treeNode.Tag = network;
+
+            foreach (NetworkNode node in network.NetworkNodes)
+            {
+                TreeNode treeNetworkNode = new TreeNode(node.Address);
+                treeNetworkNode.Tag = node;
+                treeNode.Nodes.Add(treeNetworkNode);
+            }
+            return treeNode;
+        }
+
         private void m_addNetworkButton_Click(object sender, EventArgs e)
         {
-            SimulationNetwork network1 = new SimulationNetwork();
+            /*SimulationNetwork network1 = new SimulationNetwork();
             NetworkNode n1 = new NetworkNode("172.0.0.1");
             network1.AddNode(n1);
             network1.AddNode(new NetworkNode("172.0.0.2"));
@@ -32,23 +55,33 @@ namespace ProtocolProcessingGUI
             network2.AddNode(new NetworkNode("172.0.1.2"));
 
             TreeNode treeNode2 = m_networkView.Nodes.Add("network2");
+            */
 
-            n1.Link(n2);
-            n2.Link(n1);
+            TreeNode node1 = createNetworkNode("172.0.0", 3);
+            TreeNode node2 = createNetworkNode("172.0.1", 3);
+            TreeNode node3 = createNetworkNode("172.0.2", 3);
+           // TreeNode node4 = createNetworkNode("172.0.3", 3);
 
-            treeNode1.Tag = network1;
-            treeNode2.Tag = network2;
+            ((SimulationNetwork)node1.Tag).NetworkNodes[0].Link(((SimulationNetwork)node2.Tag).NetworkNodes[0]);
+            ((SimulationNetwork)node2.Tag).NetworkNodes[0].Link(((SimulationNetwork)node3.Tag).NetworkNodes[0]);
+            //((SimulationNetwork)node3.Tag).NetworkNodes[0].Link(((SimulationNetwork)node4.Tag).NetworkNodes[0]);
 
-            foreach (NetworkNode node in network1.NetworkNodes)
+            m_networkView.Nodes.Add(node1);
+            m_networkView.Nodes.Add(node2);
+            m_networkView.Nodes.Add(node3);
+            //m_networkView.Nodes.Add(node4);
+            //n1.Link(n2);
+
+            /*foreach (NetworkNode node in network1.NetworkNodes)
             {
                 TreeNode networkTreeNode = treeNode1.Nodes.Add(node.Address);
                 networkTreeNode.Tag = node;
-            }
+            3
             foreach (NetworkNode node in network2.NetworkNodes)
             {
                 TreeNode networkTreeNode = treeNode2.Nodes.Add(node.Address);
                 networkTreeNode.Tag = node;
-            }
+            }*/
             m_addNetworkButton.Enabled = false;
         }
 

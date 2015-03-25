@@ -40,7 +40,7 @@ void free_ip_packet(SOCKET_PACKET* packet);
 Pointer simulation_socket(network_node* host,simulation_socket_type type);
 int simulation_socket_available(Pointer socket);
 //Int simulation_send(network_node* src, Int8* data, Int size, network_addr addr);
-Int simulation_send_raw_socket_node(network_node* src, Int8* data, Int size, network_node* node);
+Int simulation_send_packet(network_node* src, SOCKET_PACKET* packet);
 Int simulation_send_raw_socket(network_node* src, Int8* data, Int size, network_addr addr);
 SOCKET_PACKET* simulation_receive_raw_socket(network_node* dst);
 

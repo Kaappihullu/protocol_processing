@@ -41,6 +41,7 @@
             this.m_logBox.Multiline = true;
             this.m_logBox.Name = "m_logBox";
             this.m_logBox.ReadOnly = true;
+            this.m_logBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.m_logBox.Size = new System.Drawing.Size(362, 329);
             this.m_logBox.TabIndex = 0;
             // 

@@ -64,6 +64,14 @@ namespace ProtocolProcessingGUI
             }
         }
 
+        public String DestinationAddress
+        {
+            get
+            {
+                return SimSocket.ConvertIPAddress(BitConverter.GetBytes(Addr));
+            }
+        }
+
         public bool IsTCP
         {
             get
@@ -222,6 +230,7 @@ namespace ProtocolProcessingGUI
         public void Link(NetworkNode node)
         {
             network_link_network(m_ptr,node.m_ptr);
+            network_link_network(node.m_ptr,m_ptr);
         }
 
         public NodeRoute[] NetworkRoutes

@@ -46,7 +46,7 @@ void router_do_loop(ROUTER* router);
 
 void router_init_route_table(ROUTER* router);
 
-network_node* router_get_route_node(network_addr addr);
+network_node* router_get_route_node(ROUTER* router ,network_addr addr);
 
 void router_node_link(ROUTER* router, network_node* node);
 

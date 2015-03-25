@@ -58,6 +58,7 @@
             // m_intervalTimer
             // 
             this.m_intervalTimer.Enabled = true;
+            this.m_intervalTimer.Interval = 20;
             this.m_intervalTimer.Tick += new System.EventHandler(this.m_intervalTimer_Tick);
             // 
             // MainForm
