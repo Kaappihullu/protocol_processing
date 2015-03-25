@@ -188,8 +188,13 @@ namespace ProtocolProcessingGUI
 
         private static void onPacketSniffer(IntPtr network_node, SocketPacket packet)
         {
+
             NetworkNode node = new NetworkNode(network_node);
-            node.ReceivedPackets.Add(packet);
+            lock (node.ReceivedPackets)
+            {
+                node.ReceivedPackets.Add(packet);
+            }
+            
         }
 
         private void installPacketSniffer(PacketSniffer sniffer)
@@ -283,6 +288,8 @@ namespace ProtocolProcessingGUI
 
         private IntPtr m_ptr;
 
+        private System.Threading.Thread m_thread;
+
         public static SimulationNetwork[] Networks
         {
             get
@@ -306,6 +313,16 @@ namespace ProtocolProcessingGUI
             }
         }
 
+        private void m_threadMain()
+        {
+
+            m_thread.IsBackground = true;
+
+            for (; ;System.Threading.Thread.Sleep(10) )
+            {
+                DoLoop();
+            }
+        }
 
         public void AddNode(NetworkNode node)
         {
@@ -317,8 +334,16 @@ namespace ProtocolProcessingGUI
             network_do_loop(m_ptr);
         }
 
+        public void Run()
+        {
+            m_thread.Start();
+        }
+
         public SimulationNetwork()
         {
+
+            m_thread = new System.Threading.Thread(m_threadMain);
+
             m_ptr = network_create_simulation_network();
             m_networks.Add(this);
         }

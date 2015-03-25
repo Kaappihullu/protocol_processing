@@ -60,19 +60,21 @@ namespace ProtocolProcessingGUI
             {
                 m_logBox.Text += route.EntryIp + " via " + route.RouteIp + " hops " + route.Hops + "\r\n";
             }
-
-            foreach (SocketPacket packet in m_networkNode.ReceivedPackets)
+            lock (m_networkNode.ReceivedPackets)
             {
-                if (!packet.IsTCP)
+                foreach (SocketPacket packet in m_networkNode.ReceivedPackets)
                 {
+                    if (!packet.IsTCP)
+                    {
 
-                    if (packet.DestinationAddress != m_networkNode.Address)
-                    {
-                        m_logBox.Text += "Routing packet to" + packet.DestinationAddress + "\r\n" ;
-                    }
-                    else
-                    {
-                        m_logBox.Text += packet.ToString() + "\r\n";
+                        if (packet.DestinationAddress != m_networkNode.Address)
+                        {
+                            m_logBox.Text += "Routing packet to" + packet.DestinationAddress + "\r\n";
+                        }
+                        else
+                        {
+                            m_logBox.Text += packet.ToString() + "\r\n";
+                        }
                     }
                 }
             }

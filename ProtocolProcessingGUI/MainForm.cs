@@ -72,6 +72,11 @@ namespace ProtocolProcessingGUI
             //m_networkView.Nodes.Add(node4);
             //n1.Link(n2);
 
+            ((SimulationNetwork)node1.Tag).Run();
+            ((SimulationNetwork)node2.Tag).Run();
+            ((SimulationNetwork)node3.Tag).Run();
+            //((SimulationNetwork)node1.Tag).Run();
+
             /*foreach (NetworkNode node in network1.NetworkNodes)
             {
                 TreeNode networkTreeNode = treeNode1.Nodes.Add(node.Address);
@@ -99,7 +104,7 @@ namespace ProtocolProcessingGUI
         {
             foreach (SimulationNetwork network in SimulationNetwork.Networks)
             {
-                network.DoLoop();
+               // network.DoLoop();
             }
         }
     }

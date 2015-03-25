@@ -43,6 +43,7 @@ typedef struct{
 	
 } SOCKET;
 
+static Pointer m_socket_mutex = 0;
 typedef struct{
 	SOCKET m_socket;
 
@@ -87,8 +88,9 @@ void socket_packet_set_payload(SOCKET_PACKET* packet, Int8* payload, Int16 paylo
 Int simulation_write_raw_socket(Pointer socket, Int8* data, Int size){
 	
 	UInt32 bytesWritten = 0;
-	
+	WaitForSingleObject(m_socket_mutex,INFINITE);
 	WriteFile(PSOCKET(socket)->m_host_pipe.m_write,data,size,&bytesWritten,0);
+	ReleaseMutex(m_socket_mutex);
 
 	return bytesWritten;
 }
@@ -96,8 +98,9 @@ Int simulation_write_raw_socket(Pointer socket, Int8* data, Int size){
 Int simulation_read_raw_socket(Pointer socket,Int8* data , Int size){
 
 	UInt32 bytesRead = 0;
+	WaitForSingleObject(m_socket_mutex,INFINITE);
 	ReadFile(PSOCKET(socket)->m_host_pipe.m_read,data,size,&bytesRead,0);
-
+	ReleaseMutex(m_socket_mutex);
 	return bytesRead;
 }
 
@@ -107,18 +110,20 @@ SOCKET_PACKET* simulation_receive_raw_socket(network_node* dst){
 	int read = 0;
 	
 	memset(packet,0,sizeof(SOCKET_PACKET));
-
+	WaitForSingleObject(m_socket_mutex,INFINITE);
 	if(simulation_socket_available(dst->peer.socket)){
 		read = simulation_read_raw_socket(dst->peer.socket,packet,SOCKET_PACKET_SIZE);
 	}
 	
 	if(packet->marker != IP_PACKET_MARKER){
+		ReleaseMutex(m_socket_mutex);
 		return 0;
 	}
 
 	packet->paket_payload = malloc(packet->packet_len - read + 1);
 
 	simulation_read_raw_socket(dst->peer.socket,packet->paket_payload,packet->packet_len - read);
+	ReleaseMutex(m_socket_mutex);
 	packet->mtu --;
 	
 	if(dst->sniffer){
@@ -152,10 +157,11 @@ Int simulation_send_packet(network_node* src ,SOCKET_PACKET* packet){
 	network_node* dst = router_get_route_node(src->node_router,packet->addr);
 	
 	//if(dst )
-
-
+	
+	WaitForSingleObject(m_socket_mutex,INFINITE);
 	err += simulation_write_raw_socket(dst->peer.socket,packet,SOCKET_PACKET_SIZE);
 	err += simulation_write_raw_socket(dst->peer.socket,packet->paket_payload,packet->packet_len-SOCKET_PACKET_SIZE);
+	ReleaseMutex(m_socket_mutex);
 
 	return err;
 }
@@ -171,7 +177,13 @@ Pointer simulation_socket(network_node* host ,simulation_socket_type type){
 	SOCKET* socket = malloc(sizeof(SOCKET));
 	memset(socket,0,sizeof(SOCKET));
 	
+	if(m_socket_mutex == 0){
+		m_socket_mutex = CreateMutexA(0,0,0);
+	}
+
 	socket->m_host_node = host;
+
+	//socket->m_socket_mutex = CreateMutexA(0,1,0);
 
 	CreatePipe(&socket->m_host_pipe.m_read,&socket->m_host_pipe.m_write,0,50000);
 
