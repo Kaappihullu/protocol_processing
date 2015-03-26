@@ -146,19 +146,20 @@ network_node* router_get_route_node(ROUTER* router, network_addr dst){
 
 void router_node_link(ROUTER* router, network_node* node){
 
-	ROUTE_ADVERT_ENTRY entry ;//malloc(sizeof(ROUTE_ADVERT_ENTRY));
+	ROUTE_ADVERT_ENTRY* entry  = malloc(sizeof(ROUTE_ADVERT_ENTRY));
 
 	Pointer tmp_network = node->simulation_network;
 	network_add_simulation_network(router->router_network,node);
 	node->simulation_network = tmp_network;
 
-	memcpy(entry.entry_addr,node->address,4);
-	memcpy(entry.route_addr,router->node->address,4);
-	entry.hops = 1;
+	memcpy(entry->entry_addr,node->address,4);
+	memcpy(entry->route_addr,router->node->address,4);
+	entry->hops = 1;
 
-//	list_add_item(router->route_advert_list,entry);
+	list_add_item(router->route_advert_list,entry);
 
-	router_advertise_route(router,entry);
+	router_advertise_all(router);
+	//router_advertise_route(router,entry);
 
 }
 
@@ -256,7 +257,8 @@ void router_do_loop(ROUTER* router){
 		if(index == -1){
 			
 			list_add_item(router->route_advert_list,entry);
-			router_advertise_all(router);
+			router_advertise_route(router,*entry);
+			//router_advertise_all(router);
 		}else{
 			ROUTE_ADVERT_ENTRY* list_entry = list_get_item(router->route_advert_list,index);
 

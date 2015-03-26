@@ -54,7 +54,9 @@ namespace ProtocolProcessingGUI
 
             m_lastPacketCount = m_networkNode.ReceivedPackets.Count;
 
-            m_logBox.Text = "Received packet count: "+m_networkNode.ReceivedPackets.Count+"\r\n";
+          //  m_logBox.Text = "Received packet count: "+m_networkNode.ReceivedPackets.Count+"\r\n";
+
+            m_logBox.Text = "Network Route Count: " + m_networkNode.NetworkRoutes.Length + "\r\n";
 
             foreach(NodeRoute route in m_networkNode.NetworkRoutes)
             {

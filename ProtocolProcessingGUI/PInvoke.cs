@@ -144,6 +144,7 @@ namespace ProtocolProcessingGUI
         //to force the GC not to release this object.
         private static PacketSniffer m_sniffer = onPacketSniffer;
 
+        private static long m_packetCounter = 0;
 
         public NetworkNode(String addr)
         {
@@ -189,6 +190,8 @@ namespace ProtocolProcessingGUI
         private static void onPacketSniffer(IntPtr network_node, SocketPacket packet)
         {
 
+            m_packetCounter++;
+
             NetworkNode node = new NetworkNode(network_node);
             lock (node.ReceivedPackets)
             {
@@ -206,13 +209,21 @@ namespace ProtocolProcessingGUI
         {
             get
             {
-
+ 
                 if (!m_packets.ContainsKey(Address))
                 {
                     m_packets.Add(Address, new List<SocketPacket>());
                 }
 
                 return m_packets[Address];
+            }
+        }
+
+        public static long PacketCounter
+        {
+            get
+            {
+                return m_packetCounter;
             }
         }
 
@@ -320,7 +331,14 @@ namespace ProtocolProcessingGUI
 
             for (; ;System.Threading.Thread.Sleep(10) )
             {
-                DoLoop();
+                try
+                {
+                    DoLoop();
+                }
+                catch
+                {
+
+                }
             }
         }
 

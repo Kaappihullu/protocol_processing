@@ -185,7 +185,7 @@ Pointer simulation_socket(network_node* host ,simulation_socket_type type){
 
 	//socket->m_socket_mutex = CreateMutexA(0,1,0);
 
-	CreatePipe(&socket->m_host_pipe.m_read,&socket->m_host_pipe.m_write,0,50000);
+	CreatePipe(&socket->m_host_pipe.m_read,&socket->m_host_pipe.m_write,0,8000000);
 
 	socket->m_type = type;
 
