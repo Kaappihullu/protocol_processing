@@ -11,6 +11,7 @@
 Pointer list_create(void);
 
 void list_add_item(Pointer list, Pointer item);
-Pointer list_get_item(Pointer list, int index);
+Pointer list_get_item(Pointer list, Int index);
+void list_set_item(Pointer list, Pointer item, Int index);
 
 int list_get_count(Pointer list);

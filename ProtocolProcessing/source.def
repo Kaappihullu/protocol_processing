@@ -1,0 +1,26 @@
+LIBRARY ProtocolProcessing
+
+EXPORTS
+network_create_simulation_network
+network_add_simulation_network
+network_get_node
+network_get_node_by_index
+network_node_get_address
+network_node_get_id
+
+network_get_node_count
+network_create_node
+
+simulation_send_raw_socket
+simulation_receive_raw_socket
+
+simulation_send_host
+
+network_do_loop
+network_node_install_packet_sniffer
+network_link_network
+
+network_get_route_count
+network_get_route_by_index
+
+is_tcp_segment
