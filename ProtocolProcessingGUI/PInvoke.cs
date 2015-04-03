@@ -263,6 +263,15 @@ namespace ProtocolProcessingGUI
             }
         }
 
+
+        public bool IsConnected(NetworkNode node)
+        {
+            return (network_node_is_connected(m_ptr, node.m_ptr) == 0);
+        }
+
+        [DllImport(PInvoke.DLL,CallingConvention = CallingConvention.Cdecl)]
+        private static extern Int32 network_node_is_connected(IntPtr node1, IntPtr node2);
+
         [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr network_node_get_address(IntPtr node);
 

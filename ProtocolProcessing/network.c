@@ -65,6 +65,7 @@ Pointer network_get_route_by_index(network_node* node, Int index){
 	return list_get_item(((ROUTER*)node->node_router)->route_advert_list,index);	
 }
 
+
 Int network_get_node_count(Pointer simulation_network){
 	return list_get_count(PSIMULATION_NETWORK(simulation_network)->m_node_list);
 }
@@ -112,6 +113,12 @@ network_node* network_create_node(network_addr addr){
 	router_init(node->node_router,node);
 
 	return node;
+}
+
+Int network_node_is_connected(network_node* node1, network_node* node2){
+
+	return router_is_connected(node1->node_router,node2->node_router);
+
 }
 
 Int network_node_get_id(network_node* node){

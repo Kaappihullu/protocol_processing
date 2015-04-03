@@ -58,6 +58,8 @@ UInt8* network_node_get_address(network_node* node);
 
 void network_free_node_chain(network_node_chain* chain);
 
+Int network_node_is_connected(network_node* node1, network_node* node2);
+
 Int is_in_network_prefix(network_prefix prefix, network_addr addr);
 Int network_node_get_id(network_node* node);
 

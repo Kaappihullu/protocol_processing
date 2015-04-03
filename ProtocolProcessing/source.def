@@ -24,3 +24,5 @@ network_get_route_count
 network_get_route_by_index
 
 is_tcp_segment
+
+network_node_is_connected

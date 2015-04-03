@@ -223,6 +223,15 @@ void router_advertise_route(ROUTER* router ,ROUTE_ADVERT_ENTRY entry){
 
 }
 
+Int router_is_connected(ROUTER* router1, ROUTER* router2){
+	
+	if (network_get_node(router1->router_network, router2->node->address) != 0 || network_get_node(router1->node->simulation_network, router2->node->address) != 0){
+		return 0;
+	}
+	return 1;
+
+}
+
 Int router_get_entry_index(ROUTER* router, ROUTE_ADVERT_ENTRY* entry){
 	
 	int i, c = list_get_count(router->route_advert_list);
@@ -266,6 +275,7 @@ void router_do_loop(ROUTER* router){
 				
 				free(list_get_item(router->route_advert_list,index));
 				list_set_item(router->route_advert_list,list_entry,index);
+				router_advertise_route(router, *entry);
 				
 			}else{
 				free(entry);
