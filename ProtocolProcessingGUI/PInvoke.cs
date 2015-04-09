@@ -269,11 +269,16 @@ namespace ProtocolProcessingGUI
             return (network_node_is_connected(m_ptr, node.m_ptr) == 0);
         }
 
+        public override string ToString()
+        {
+            return Address;
+        }
+
         [DllImport(PInvoke.DLL,CallingConvention = CallingConvention.Cdecl)]
         private static extern Int32 network_node_is_connected(IntPtr node1, IntPtr node2);
 
         [DllImport(PInvoke.DLL, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr network_node_get_address(IntPtr node);
+        private static extern IntPtr network_node_get_address(IntPtr node);
 
         [DllImport(PInvoke.DLL,CallingConvention= CallingConvention.Cdecl)]
         public static extern IntPtr network_create_node(byte[] addr);
@@ -310,11 +315,26 @@ namespace ProtocolProcessingGUI
 
         private System.Threading.Thread m_thread;
 
+        private String m_tag = "A Network";
+
         public static SimulationNetwork[] Networks
         {
             get
             {
                 return m_networks.ToArray();
+            }
+        }
+
+        public String NetworkTag
+        {
+
+            set
+            {
+                m_tag = value;
+            }
+            get
+            {
+                return m_tag;
             }
         }
 
@@ -364,6 +384,20 @@ namespace ProtocolProcessingGUI
         public void Run()
         {
             m_thread.Start();
+        }
+
+        public static void RunAll()
+        {
+            foreach (SimulationNetwork network in Networks)
+            {
+                network.Run();
+            }
+        }
+
+
+        public SimulationNetwork(String tag) : this()
+        {
+            m_tag = tag;
         }
 
         public SimulationNetwork()

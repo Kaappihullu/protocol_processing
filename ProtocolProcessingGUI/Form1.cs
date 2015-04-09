@@ -15,5 +15,18 @@ namespace ProtocolProcessingGUI
         {
             InitializeComponent();
         }
+
+        private void SenderNetCombo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SenderNetCombo.Items.Add("test1");
+            SenderNetCombo.Items.Add("test2");
+            SenderNetCombo.Items.Add("test3");
+            SenderNetCombo.SelectedItem = "test3";
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

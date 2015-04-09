@@ -16,19 +16,10 @@ namespace ProtocolProcessingGUI
         {
             InitializeComponent();
         }
-
-        private TreeNode createNetworkNode(String prefix, int count)
+        public static TreeNode CreateNetworkNode(SimulationNetwork network)
         {
 
-            SimulationNetwork network = new SimulationNetwork();
-
-            for (int i = 0; i < count; i++)
-            {
-                network.AddNode(new NetworkNode(prefix+"."+(i+1)));
-            }
-
-
-            TreeNode treeNode = new TreeNode("network");
+            TreeNode treeNode = new TreeNode(network.NetworkTag);
             treeNode.Tag = network;
 
             foreach (NetworkNode node in network.NetworkNodes)
@@ -38,55 +29,23 @@ namespace ProtocolProcessingGUI
                 treeNode.Nodes.Add(treeNetworkNode);
             }
             return treeNode;
+
         }
+
+        private void rebuildNetworkView()
+        {
+            m_networkView.Nodes.Clear();
+            foreach (SimulationNetwork network in SimulationNetwork.Networks)
+            {
+                m_networkView.Nodes.Add(CreateNetworkNode(network));
+            }
+        }
+
 
         private void m_addNetworkButton_Click(object sender, EventArgs e)
         {
-            /*SimulationNetwork network1 = new SimulationNetwork();
-            NetworkNode n1 = new NetworkNode("172.0.0.1");
-            network1.AddNode(n1);
-            network1.AddNode(new NetworkNode("172.0.0.2"));
-
-            TreeNode treeNode1 = m_networkView.Nodes.Add("network1");
-
-            SimulationNetwork network2 = new SimulationNetwork();
-            NetworkNode n2 = new NetworkNode("172.0.1.1");
-            network2.AddNode(n2);
-            network2.AddNode(new NetworkNode("172.0.1.2"));
-
-            TreeNode treeNode2 = m_networkView.Nodes.Add("network2");
-            */
-
-            TreeNode node1 = createNetworkNode("172.0.0", 15);
-            TreeNode node2 = createNetworkNode("172.0.1", 6);
-            TreeNode node3 = createNetworkNode("172.0.2", 8);
-            TreeNode node4 = createNetworkNode("172.0.3", 14);
-
-            ((SimulationNetwork)node1.Tag).NetworkNodes[0].Link(((SimulationNetwork)node2.Tag).NetworkNodes[0]);
-            ((SimulationNetwork)node2.Tag).NetworkNodes[0].Link(((SimulationNetwork)node3.Tag).NetworkNodes[0]);
-            ((SimulationNetwork)node3.Tag).NetworkNodes[0].Link(((SimulationNetwork)node4.Tag).NetworkNodes[0]);
-
-            m_networkView.Nodes.Add(node1);
-            m_networkView.Nodes.Add(node2);
-            m_networkView.Nodes.Add(node3);
-            m_networkView.Nodes.Add(node4);
-            //n1.Link(n2);
-
-            ((SimulationNetwork)node1.Tag).Run();
-            ((SimulationNetwork)node2.Tag).Run();
-            ((SimulationNetwork)node3.Tag).Run();
-            ((SimulationNetwork)node4.Tag).Run();
-
-            /*foreach (NetworkNode node in network1.NetworkNodes)
-            {
-                TreeNode networkTreeNode = treeNode1.Nodes.Add(node.Address);
-                networkTreeNode.Tag = node;
-            3
-            foreach (NetworkNode node in network2.NetworkNodes)
-            {
-                TreeNode networkTreeNode = treeNode2.Nodes.Add(node.Address);
-                networkTreeNode.Tag = node;
-            }*/
+            rebuildNetworkView();
+            SimulationNetwork.RunAll();
             m_addNetworkButton.Enabled = false;
         }
 
@@ -103,6 +62,16 @@ namespace ProtocolProcessingGUI
         private void m_intervalTimer_Tick(object sender, EventArgs e)
         {
             m_packetCounterLabel.Text = "Packet Counter: " + NetworkNode.PacketCounter;
+        }
+
+        private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void m_configButton_Click(object sender, EventArgs e)
+        {
+            ConfigForm.ShowForm();
         }
     }
 }
