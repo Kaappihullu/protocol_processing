@@ -46,7 +46,8 @@ namespace ProtocolProcessingGUI
         {
             rebuildNetworkView();
             SimulationNetwork.RunAll();
-            m_addNetworkButton.Enabled = false;
+            m_startNetworkButton.Enabled = false;
+            m_configButton.Enabled = false;
         }
 
         private void m_networkView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)

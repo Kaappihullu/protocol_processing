@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.m_networkView = new System.Windows.Forms.TreeView();
-            this.m_addNetworkButton = new System.Windows.Forms.Button();
+            this.m_startNetworkButton = new System.Windows.Forms.Button();
             this.m_intervalTimer = new System.Windows.Forms.Timer(this.components);
             this.m_packetCounterLabel = new System.Windows.Forms.Label();
             this.m_toolBar = new System.Windows.Forms.ToolStrip();
@@ -51,16 +51,16 @@
             this.m_networkView.TabIndex = 0;
             this.m_networkView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.m_networkView_NodeMouseDoubleClick);
             // 
-            // m_addNetworkButton
+            // m_startNetworkButton
             // 
-            this.m_addNetworkButton.Location = new System.Drawing.Point(276, 400);
-            this.m_addNetworkButton.Margin = new System.Windows.Forms.Padding(2);
-            this.m_addNetworkButton.Name = "m_addNetworkButton";
-            this.m_addNetworkButton.Size = new System.Drawing.Size(92, 29);
-            this.m_addNetworkButton.TabIndex = 1;
-            this.m_addNetworkButton.Text = "Add Network";
-            this.m_addNetworkButton.UseVisualStyleBackColor = true;
-            this.m_addNetworkButton.Click += new System.EventHandler(this.m_addNetworkButton_Click);
+            this.m_startNetworkButton.Location = new System.Drawing.Point(276, 400);
+            this.m_startNetworkButton.Margin = new System.Windows.Forms.Padding(2);
+            this.m_startNetworkButton.Name = "m_startNetworkButton";
+            this.m_startNetworkButton.Size = new System.Drawing.Size(92, 29);
+            this.m_startNetworkButton.TabIndex = 1;
+            this.m_startNetworkButton.Text = "Start Network";
+            this.m_startNetworkButton.UseVisualStyleBackColor = true;
+            this.m_startNetworkButton.Click += new System.EventHandler(this.m_addNetworkButton_Click);
             // 
             // m_intervalTimer
             // 
@@ -106,7 +106,7 @@
             this.ClientSize = new System.Drawing.Size(376, 439);
             this.Controls.Add(this.m_toolBar);
             this.Controls.Add(this.m_packetCounterLabel);
-            this.Controls.Add(this.m_addNetworkButton);
+            this.Controls.Add(this.m_startNetworkButton);
             this.Controls.Add(this.m_networkView);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
@@ -121,7 +121,7 @@
         #endregion
 
         private System.Windows.Forms.TreeView m_networkView;
-        private System.Windows.Forms.Button m_addNetworkButton;
+        private System.Windows.Forms.Button m_startNetworkButton;
         private System.Windows.Forms.Timer m_intervalTimer;
         private System.Windows.Forms.Label m_packetCounterLabel;
         private System.Windows.Forms.ToolStrip m_toolBar;
